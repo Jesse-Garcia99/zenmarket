@@ -12,6 +12,7 @@ export type Category =
   | 'kitchen'
   | 'books'
   | 'apparel'
+  | 'goods'
 
 export interface Dims {
   l: number // cm
@@ -30,6 +31,7 @@ export interface Product {
   icon: IconKey
   battery: boolean // lithium battery -> carrier restrictions
   blurb: string
+  images?: string[] // filenames under public/products/; absent -> icon tile
 }
 
 export type IconKey =
@@ -43,6 +45,7 @@ export type IconKey =
   | 'book'
   | 'keyboard'
   | 'hoodie'
+  | 'goods'
 
 // A historical parcel measured after packing. `items` carries the measured
 // per-item weights recorded on warehouse arrival — the two layers of training

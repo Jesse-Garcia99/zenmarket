@@ -27,9 +27,11 @@ export function Header() {
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
         <a href="#/" className="flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-zm-red text-xl font-black text-white">
-            Z
-          </span>
+          <img
+            src={`${import.meta.env.BASE_URL}zenmarket-mark.png`}
+            alt="ZenMarket"
+            className="h-9 w-9 rounded-full"
+          />
           <span className="text-xl font-bold tracking-tight">ZenMarket</span>
         </a>
         <div className="flex flex-1 items-center overflow-hidden rounded-md border border-neutral-300">

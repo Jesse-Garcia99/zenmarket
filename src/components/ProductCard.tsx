@@ -35,7 +35,11 @@ export function ProductCard({ product }: { product: Product }) {
       href={itemHref(product.id)}
       className="group block overflow-hidden rounded-lg border border-neutral-200 bg-white transition-shadow hover:shadow-md"
     >
-      <ProductThumb icon={product.icon} className="aspect-square w-full" />
+      <ProductThumb
+        icon={product.icon}
+        image={product.images?.[0]}
+        className="aspect-square w-full bg-white"
+      />
       <div className="p-3">
         <h3 className="line-clamp-2 min-h-9 text-[13px] font-medium leading-snug group-hover:text-zm-red">
           {product.titleEn}

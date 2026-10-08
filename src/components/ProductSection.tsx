@@ -7,22 +7,29 @@ import { EstimatePanel } from './EstimatePanel'
 function Gallery() {
   const { product } = useZen()
   const [active, setActive] = useState(0)
+  const images = product.images ?? []
   return (
     <div>
-      <ProductThumb icon={product.icon} className="aspect-square w-full rounded-lg" />
-      <div className="mt-2 grid grid-cols-4 gap-2">
-        {[0, 1, 2, 3].map((i) => (
-          <button
-            key={i}
-            onClick={() => setActive(i)}
-            className={`overflow-hidden rounded border-2 ${
-              active === i ? 'border-zm-red' : 'border-transparent'
-            }`}
-          >
-            <ProductThumb icon={product.icon} className="aspect-square w-full" />
-          </button>
-        ))}
-      </div>
+      <ProductThumb
+        icon={product.icon}
+        image={images[Math.min(active, images.length - 1)]}
+        className="aspect-square w-full rounded-lg bg-white"
+      />
+      {images.length > 1 && (
+        <div className="mt-2 grid grid-cols-4 gap-2">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`overflow-hidden rounded border-2 ${
+                active === i ? 'border-zm-red' : 'border-transparent'
+              }`}
+            >
+              <ProductThumb icon={product.icon} image={img} className="aspect-square w-full bg-white" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

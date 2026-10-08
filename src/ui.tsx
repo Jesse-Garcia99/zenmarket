@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import {
   BookBookmark,
   Camera,
   Cards,
   CookingPot,
   GameController,
+  Gift,
   Hoodie,
   Keyboard,
   Rabbit,
@@ -31,17 +33,37 @@ const ICONS: Record<IconKey, typeof Watch> = {
   book: BookBookmark,
   keyboard: Keyboard,
   hoodie: Hoodie,
+  goods: Gift,
 }
 
-// Placeholder product art: a neutral studio tile with a category glyph.
-// Deliberately honest — the demo carries no real product photography.
-export function ProductThumb({ icon, className = '' }: { icon: IconKey; className?: string }) {
+// Product art: a real listing photo when we have one, otherwise a neutral
+// studio tile with a category glyph (used for unphotographed warehouse items).
+export function ProductThumb({
+  icon,
+  image,
+  className = '',
+}: {
+  icon: IconKey
+  image?: string
+  className?: string
+}) {
+  const [failed, setFailed] = useState(false)
   const Icon = ICONS[icon]
   return (
     <div
-      className={`flex items-center justify-center bg-gradient-to-br from-neutral-50 to-neutral-200 text-neutral-400 ${className}`}
+      className={`flex items-center justify-center overflow-hidden bg-gradient-to-br from-neutral-50 to-neutral-200 text-neutral-400 ${className}`}
     >
-      <Icon size="38%" weight="thin" />
+      {image && !failed ? (
+        <img
+          src={`${import.meta.env.BASE_URL}products/${image}`}
+          alt=""
+          loading="lazy"
+          className="h-full w-full bg-white object-contain"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <Icon size="38%" weight="thin" />
+      )}
     </div>
   )
 }

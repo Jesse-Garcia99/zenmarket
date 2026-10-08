@@ -11,15 +11,17 @@ customer for a parcel weight:
 
 **Live demo:** https://jesse-garcia99.github.io/zenmatch/ (simulated data)
 
-**Model training notebook:** https://colab.research.google.com/drive/1K9vTPsouMmDl92HV76xDcVfS5aQ7iXEf —
-the LightGBM-style training/experiment side of the prediction layer; this repo
-contains the inference-facing demo (a transparent k-NN stand-in).
+**Feature proposal:** [docs/Zen_Market_New_Feature_Proposal.ipynb](docs/Zen_Market_New_Feature_Proposal.ipynb) —
+the full proposal this prototype implements (problem, data requirements,
+prediction + pricing methodology, recommendation scoring, evaluation plan,
+risks). Also on [Google Colab](https://colab.research.google.com/drive/1K9vTPsouMmDl92HV76xDcVfS5aQ7iXEf)
+(link requires the document to be shared publicly).
 
 ## What you're looking at
 
 A browseable catalog + product pages — a deliberate facsimile of ZenMarket's
-listing and `product.aspx?shop=amazon` layouts — with the ZenMatch layer
-integrated:
+listing and `product.aspx?shop=amazon` layouts, with real product photography
+vendored under `public/products/` — and the ZenMatch layer integrated:
 
 - **Sticky ZenMatch banner** with three states: standalone estimate when the
   warehouse is empty, incremental cost + savings when items are in storage,
@@ -31,10 +33,15 @@ integrated:
   behind the estimate, with similarity scores. Every number is traceable.
 - **Warehouse drawer** — stored items carry *measured* arrival weights
   (matching how ZenMarket actually works: items are weighed on arrival, final
-  parcel measured after packing). Remove items to see the banner respond.
+  parcel measured after packing), plus an items total kept visually separate
+  from the shipping quote. Remove items to see the banner respond.
 - **Related items** with live incremental-shipping chips — light items
   genuinely "ride free" when they don't push the parcel into the next rate
   band.
+
+Product photos are the real listings' images (Amazon associate endpoint and
+manufacturer pages), vendored so the demo works offline; prices, weights, and
+history remain simulated.
 
 ## How the engine works
 

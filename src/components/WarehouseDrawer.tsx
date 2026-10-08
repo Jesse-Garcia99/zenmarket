@@ -11,6 +11,7 @@ export function WarehouseDrawer() {
 
   if (!drawerOpen) return null
   const parcelQuote = warehouseParcel ? quote(warehouseParcel, method, dest) : null
+  const itemTotal = warehouse.reduce((sum, w) => sum + w.product.price, 0)
 
   return (
     <div className="fixed inset-0 z-50">
@@ -32,7 +33,11 @@ export function WarehouseDrawer() {
             <ul className="space-y-3">
               {warehouse.map((w) => (
                 <li key={w.product.id} className="flex gap-3 rounded-lg border border-neutral-200 p-3">
-                  <ProductThumb icon={w.product.icon} className="h-14 w-14 shrink-0 rounded" />
+                  <ProductThumb
+                    icon={w.product.icon}
+                    image={w.product.images?.[0]}
+                    className="h-14 w-14 shrink-0 rounded"
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[13px] font-medium">{w.product.titleEn}</p>
                     <p className="price-num mt-0.5 text-xs text-neutral-500">
@@ -55,15 +60,25 @@ export function WarehouseDrawer() {
         {warehouseParcel && parcelQuote && (
           <footer className="border-t border-neutral-200 px-4 py-3 text-[13px]">
             <div className="flex justify-between text-neutral-600">
+              <span>Items total ({warehouse.length}) 商品代金</span>
+              <span className="price-num">{fmtYen(itemTotal)}</span>
+            </div>
+            <div className="mt-1 flex justify-between text-neutral-600">
               <span>Packed as one parcel ({warehouseParcel.box})</span>
               <span className="price-num">{fmtKg(warehouseParcel.weight)}</span>
             </div>
             <div className="mt-1 flex justify-between font-semibold">
-              <span>Ships via {method}</span>
+              <span>Shipping via {method}</span>
               <span className="price-num">
                 {parcelQuote.price === null ? parcelQuote.note : fmtYen(parcelQuote.price)}
               </span>
             </div>
+            {parcelQuote.price !== null && (
+              <div className="mt-2 flex justify-between border-t border-neutral-100 pt-2 font-bold">
+                <span>Items + shipping</span>
+                <span className="price-num">{fmtYen(itemTotal + parcelQuote.price)}</span>
+              </div>
+            )}
             <p className="mt-1 text-[11px] text-neutral-400">
               Stored items use weights measured on arrival — no prediction needed.
             </p>

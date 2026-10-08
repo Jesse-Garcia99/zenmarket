@@ -50,6 +50,7 @@ const PRIOR: Record<Category, { w: WeightRange; dims: Dims }> = {
   kitchen: { w: { p10: 0.9, p50: 1.4, p90: 2.0 }, dims: { l: 20, w: 18, h: 15 } },
   books: { w: { p10: 0.5, p50: 0.9, p90: 1.6 }, dims: { l: 30, w: 23, h: 4 } },
   apparel: { w: { p10: 0.4, p50: 0.6, p90: 0.9 }, dims: { l: 30, w: 25, h: 6 } },
+  goods: { w: { p10: 0.05, p50: 0.15, p90: 0.3 }, dims: { l: 15, w: 11, h: 4 } },
 }
 
 // Weighted quantile over neighbor weights (weights are similarity scores).
