@@ -9,7 +9,7 @@ customer for a parcel weight:
 2. **What would it cost to add it to a parcel I already have in storage?** —
    consolidation math, live, as warehouse contents change.
 
-**Live demo:** https://jesse-garcia99.github.io/zenmatch/ (simulated data)
+**Live demo:** https://jesse-garcia99.github.io/zenmarket/ (simulated data)
 
 **Feature proposal:** [docs/Zen_Market_New_Feature_Proposal.ipynb](docs/Zen_Market_New_Feature_Proposal.ipynb) —
 the full proposal this prototype implements (problem, data requirements,
@@ -100,5 +100,5 @@ npm run build    # type-check + production build to dist/
 ## Deploy
 
 GitHub Actions (`.github/workflows/pages.yml`) builds and deploys `dist/` to
-GitHub Pages on every push to `main`. The site is served from the `/zenmatch/`
+GitHub Pages on every push to `main`. The site is served from the `/zenmarket/`
 path, set via `base` in `vite.config.ts`.
