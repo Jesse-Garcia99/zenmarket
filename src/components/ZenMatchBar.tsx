@@ -7,13 +7,13 @@ import { fmtKg, fmtYen } from '../ui'
 
 // The persistent, contextual banner from the concept doc. Sticky under the
 // store tabs so it stays visible while browsing. States:
-//   browse page       -> parcel summary + "chips on each item show the delta"
+//   non-item pages    -> parcel summary / browse pitch
 //   item already stored -> confirmation instead of a pitch
 //   savings > 0       -> consolidation opportunity
 //   ineligible        -> method can't carry the combined parcel
 //   empty warehouse   -> standalone estimate for the item being viewed
 export function ZenMatchBar() {
-  const { route, product, warehouse, warehouseParcel, comparison, standaloneQuote, dest, setDest, setDrawerOpen, isStored } =
+  const { route, product, warehouse, warehouseParcel, comparison, standaloneQuote, dest, setDest, setDrawerOpen, isStored, t } =
     useZen()
 
   let icon = <Package size={18} weight="bold" />
@@ -24,47 +24,40 @@ export function ZenMatchBar() {
     const price = warehouseParcel ? quote(warehouseParcel, 'EMS', dest).price : null
     message = warehouseParcel ? (
       <>
-        Your stored parcel: {warehouse.length} item{warehouse.length === 1 ? '' : 's'} ·{' '}
-        {fmtKg(warehouseParcel.weight)} · ships EMS for <strong>{price ? fmtYen(price) : '—'}</strong>
-        <span className="text-teal-800/70"> — each listing shows what it adds to your parcel</span>
+        {t['bar.storedParcel'](
+          t.items(warehouse.length),
+          fmtKg(warehouseParcel.weight),
+          price ? fmtYen(price) : '—',
+        )}
+        <span className="text-teal-800/70"> — {t['bar.storedHint']}</span>
       </>
     ) : (
       <>
-        Every listing shows its estimated shipping to{' '}
-        {DESTINATIONS.find((d) => d.code === dest)?.label}
-        <span className="text-teal-800/70"> — predicted from similar shipments, no weight entry needed</span>
+        {t['bar.browseEmpty']} {t[`dest.${dest}`]}
+        <span className="text-teal-800/70"> — {t['bar.predHint']}</span>
       </>
     )
   } else if (isStored(product.id)) {
     icon = <CheckCircle size={18} weight="bold" />
-    message = (
-      <>
-        This item is <strong>in your warehouse</strong> — its measured weight is already part of
-        your parcel estimate.
-      </>
-    )
+    message = <>{t['bar.storedItem']}</>
   } else if (warehouse.length === 0) {
     message = (
       <>
-        Estimated shipping to {DESTINATIONS.find((d) => d.code === dest)?.label} for this item:{' '}
+        {t['bar.itemShip']} {t[`dest.${dest}`]} {t['bar.forItem']}{' '}
         <strong>
-          {standaloneQuote.price === null
-            ? 'not available via this method'
-            : fmtYen(standaloneQuote.price)}
+          {standaloneQuote.price === null ? t['bar.notAvail'] : fmtYen(standaloneQuote.price)}
         </strong>
-        <span className="text-teal-800/70">
-          {' '}
-          — predicted from similar shipments, no weight entry needed
-        </span>
+        <span className="text-teal-800/70"> — {t['bar.predHint']}</span>
       </>
     )
   } else if (comparison && comparison.savings > 0) {
     const [lo, hi] = comparison.incrementalRange
     message = (
       <>
-        Add this item to your stored parcel for about{' '}
-        <strong>+{lo === hi ? fmtYen(lo) : `${fmtYen(lo)}–${fmtYen(hi)}`}</strong> — save ≈
-        <strong>{fmtYen(comparison.savings)}</strong> vs shipping separately
+        {t['bar.addAbout']}{' '}
+        <strong>+{lo === hi ? fmtYen(lo) : `${fmtYen(lo)}–${fmtYen(hi)}`}</strong> —{' '}
+        {t['bar.saveVs']}
+        <strong>{fmtYen(comparison.savings)}</strong> {t['bar.vsSeparate']}
       </>
     )
   } else if (comparison) {
@@ -72,14 +65,14 @@ export function ZenMatchBar() {
     tone = 'bg-amber-50 border-amber-200 text-amber-950'
     message = (
       <>
-        Consolidating this item isn&apos;t cheaper — its size forces a larger carton.{' '}
-        <strong>Ship separately to save {fmtYen(-comparison.savings)}.</strong>
+        {t['bar.notCheaper']}{' '}
+        <strong>{t['bar.shipSeparate'](fmtYen(-comparison.savings))}</strong>
       </>
     )
   } else {
     icon = <Warning size={18} weight="bold" />
     tone = 'bg-amber-50 border-amber-200 text-amber-950'
-    message = <>This method can&apos;t carry the combined parcel — try another shipping method.</>
+    message = <>{t['bar.noMethod']}</>
   }
 
   return (
@@ -102,7 +95,7 @@ export function ZenMatchBar() {
           >
             {DESTINATIONS.map((d) => (
               <option key={d.code} value={d.code}>
-                {d.label}
+                {t[`dest.${d.code}`]}
               </option>
             ))}
           </select>
@@ -110,7 +103,7 @@ export function ZenMatchBar() {
             onClick={() => setDrawerOpen(true)}
             className="rounded border border-current/25 px-2.5 py-1 text-xs font-semibold hover:bg-white/70"
           >
-            My warehouse · {warehouse.length} item{warehouse.length === 1 ? '' : 's'}
+            {t['bar.myWarehouse']} · {t.items(warehouse.length)}
           </button>
         </span>
       </div>

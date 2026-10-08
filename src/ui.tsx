@@ -68,7 +68,13 @@ export function ProductThumb({
   )
 }
 
-export function ConfidenceBadge({ level }: { level: 'high' | 'medium' | 'low' }) {
+export function ConfidenceBadge({
+  level,
+  label,
+}: {
+  level: 'high' | 'medium' | 'low'
+  label?: string
+}) {
   const styles = {
     high: 'bg-teal-50 text-teal-800 border-teal-200',
     medium: 'bg-amber-50 text-amber-800 border-amber-200',
@@ -76,7 +82,7 @@ export function ConfidenceBadge({ level }: { level: 'high' | 'medium' | 'low' })
   }[level]
   return (
     <span className={`rounded border px-1.5 py-0.5 text-[11px] font-medium ${styles}`}>
-      {level} confidence
+      {label ?? `${level} confidence`}
     </span>
   )
 }

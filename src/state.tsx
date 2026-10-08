@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { I18N, type Dict, type Lang } from './i18n'
 import {
   ALL_PRODUCTS,
   HERO_PRODUCT,
@@ -34,6 +35,9 @@ interface ZenState {
   isWatched: (id: string) => boolean
   query: string // header search, applied on the browse grid
   setQuery: (q: string) => void
+  lang: Lang
+  setLang: (l: Lang) => void
+  t: Dict
 
   prediction: Prediction
   standaloneQuote: Quote // current product shipped alone, at p50
@@ -52,6 +56,11 @@ export function ZenProvider({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [watchlist, setWatchlist] = useState<string[]>([])
   const [query, setQuery] = useState('')
+  const [lang, setLang] = useState<Lang>('en')
+
+  useEffect(() => {
+    document.documentElement.lang = lang === 'ja' ? 'ja' : 'en'
+  }, [lang])
 
   const product =
     route.page === 'item'
@@ -123,12 +132,15 @@ export function ZenProvider({ children }: { children: ReactNode }) {
       isWatched: (id) => watchlist.includes(id),
       query,
       setQuery,
+      lang,
+      setLang,
+      t: I18N[lang],
       prediction,
       standaloneQuote,
       warehouseParcel,
       comparison,
     }
-  }, [route, product, cart, warehouse, dest, method, drawerOpen, prediction, watchlist, query])
+  }, [route, product, cart, warehouse, dest, method, drawerOpen, prediction, watchlist, query, lang])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

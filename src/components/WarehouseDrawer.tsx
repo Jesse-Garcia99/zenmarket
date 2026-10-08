@@ -21,6 +21,7 @@ export function WarehouseDrawer() {
     warehouseParcel,
     method,
     dest,
+    t,
   } = useZen()
 
   if (!drawerOpen) return null
@@ -33,8 +34,8 @@ export function WarehouseDrawer() {
       <div className="absolute inset-0 bg-black/30" onClick={() => setDrawerOpen(false)} />
       <aside className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col bg-white shadow-xl">
         <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
-          <h2 className="text-sm font-bold">Cart &amp; warehouse</h2>
-          <button onClick={() => setDrawerOpen(false)} aria-label="Close">
+          <h2 className="text-sm font-bold">{t['wd.title']}</h2>
+          <button onClick={() => setDrawerOpen(false)} aria-label={t['wd.close']}>
             <X size={18} />
           </button>
         </header>
@@ -44,7 +45,7 @@ export function WarehouseDrawer() {
             <section className="mb-4">
               <h3 className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-neutral-500">
                 <ShoppingCart size={14} weight="bold" />
-                Shopping cart — not yet ordered
+                {t['wd.cartHead']}
               </h3>
               <ul className="space-y-3">
                 {cart.map((p) => (
@@ -67,7 +68,7 @@ export function WarehouseDrawer() {
                         {p.titleEn}
                       </a>
                       <p className="price-num mt-0.5 text-xs text-neutral-500">
-                        est. {fmtKg(predictItem(p).weight.p50)} on arrival
+                        {t['wd.estArrival'](fmtKg(predictItem(p).weight.p50))}
                       </p>
                       <p className="price-num text-xs text-neutral-400">{fmtYen(p.price)}</p>
                     </div>
@@ -75,14 +76,14 @@ export function WarehouseDrawer() {
                       onClick={() => removeCartItem(p.id)}
                       className="self-start text-xs font-medium text-zm-red hover:underline"
                     >
-                      Remove
+                      {t['wd.remove']}
                     </button>
                   </li>
                 ))}
               </ul>
               <div className="mt-3 flex items-center justify-between text-[13px]">
                 <span className="text-neutral-600">
-                  Cart total ({cart.length}) 商品代金
+                  {t['wd.cartTotal'](cart.length)}
                 </span>
                 <span className="price-num font-semibold">{fmtYen(cartTotal)}</span>
               </div>
@@ -90,10 +91,10 @@ export function WarehouseDrawer() {
                 onClick={checkoutCart}
                 className="mt-2 w-full rounded-md bg-zm-red py-2.5 text-sm font-bold text-white hover:bg-zm-red-dark"
               >
-                Place order — ships to warehouse
+                {t['wd.checkout']}
               </button>
               <p className="mt-1 text-[11px] text-neutral-400">
-                Ordered items arrive at the warehouse, get weighed, then join your parcel estimate.
+                {t['wd.checkoutNote']}
               </p>
             </section>
           )}
@@ -101,11 +102,11 @@ export function WarehouseDrawer() {
           <section>
             <h3 className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-neutral-500">
               <Warehouse size={14} weight="bold" />
-              My warehouse — arrived &amp; weighed
+              {t['wd.whHead']}
             </h3>
             {warehouse.length === 0 ? (
               <p className="py-8 text-center text-sm text-neutral-500">
-                No items in storage. The banner now shows standalone shipping estimates.
+                {t['wd.whEmpty']}
               </p>
             ) : (
               <ul className="space-y-3">
@@ -126,7 +127,7 @@ export function WarehouseDrawer() {
                         {w.product.titleEn}
                       </a>
                       <p className="price-num mt-0.5 text-xs text-neutral-500">
-                        measured {fmtKg(w.measuredWeight)} · {fmtDims(w.measuredDims)}
+                        {t['wd.measured'](fmtKg(w.measuredWeight), fmtDims(w.measuredDims))}
                       </p>
                       <p className="price-num text-xs text-neutral-400">{fmtYen(w.product.price)}</p>
                     </div>
@@ -134,7 +135,7 @@ export function WarehouseDrawer() {
                       onClick={() => removeItem(w.product.id)}
                       className="self-start text-xs font-medium text-zm-red hover:underline"
                     >
-                      Remove
+                      {t['wd.remove']}
                     </button>
                   </li>
                 ))}
@@ -146,27 +147,27 @@ export function WarehouseDrawer() {
         {warehouseParcel && parcelQuote && (
           <footer className="border-t border-neutral-200 px-4 py-3 text-[13px]">
             <div className="flex justify-between text-neutral-600">
-              <span>Items total ({warehouse.length}) 商品代金</span>
+              <span>{t['wd.itemsTotal'](warehouse.length)}</span>
               <span className="price-num">{fmtYen(itemTotal)}</span>
             </div>
             <div className="mt-1 flex justify-between text-neutral-600">
-              <span>Packed as one parcel ({warehouseParcel.box})</span>
+              <span>{t['wd.packedAs'](warehouseParcel.box)}</span>
               <span className="price-num">{fmtKg(warehouseParcel.weight)}</span>
             </div>
             <div className="mt-1 flex justify-between font-semibold">
-              <span>Shipping via {method}</span>
+              <span>{t['wd.shipVia'](method)}</span>
               <span className="price-num">
                 {parcelQuote.price === null ? parcelQuote.note : fmtYen(parcelQuote.price)}
               </span>
             </div>
             {parcelQuote.price !== null && (
               <div className="mt-2 flex justify-between border-t border-neutral-100 pt-2 font-bold">
-                <span>Items + shipping</span>
+                <span>{t['wd.totalShip']}</span>
                 <span className="price-num">{fmtYen(itemTotal + parcelQuote.price)}</span>
               </div>
             )}
             <p className="mt-1 text-[11px] text-neutral-400">
-              Stored items use weights measured on arrival — no prediction needed.
+              {t['wd.whNote']}
             </p>
           </footer>
         )}
@@ -175,7 +176,7 @@ export function WarehouseDrawer() {
           onClick={resetWarehouse}
           className="border-t border-neutral-200 py-2.5 text-xs font-medium text-neutral-500 hover:bg-neutral-50"
         >
-          Reset demo inventory
+          {t['wd.reset']}
         </button>
       </aside>
     </div>

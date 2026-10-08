@@ -10,26 +10,26 @@ import { fmtUsd, fmtYen, ProductThumb } from '../ui'
 // Per-card shipping chip: the same incremental/standalone math as the banner,
 // resolved for one product. Stored items show a "stored" state instead.
 export function ProductCard({ product }: { product: Product }) {
-  const { warehouse, method, dest, isStored, inCart } = useZen()
+  const { warehouse, method, dest, isStored, inCart, t } = useZen()
 
   const chip = useMemo(() => {
-    if (isStored(product.id)) return { label: 'in your warehouse', stored: true }
-    if (inCart(product.id)) return { label: 'in your cart — not yet ordered', stored: true }
+    if (isStored(product.id)) return { label: t['chip.stored'], stored: true }
+    if (inCart(product.id)) return { label: t['chip.cart'], stored: true }
     const p = predictItem(product)
     const items = warehouse.map((w) => ({ weight: w.measuredWeight, dims: w.measuredDims }))
     if (items.length === 0) {
       const q = quote(packParcel([{ weight: p.weight.p50, dims: p.dims }]), method, dest)
       return q.price === null
-        ? { label: `no ${method} quote`, stored: false }
-        : { label: `ships ~${fmtYen(q.price)} alone`, stored: false }
+        ? { label: t['chip.noquote'](method), stored: false }
+        : { label: t['chip.alone'](fmtYen(q.price)), stored: false }
     }
     const cmp = compare(items, { dims: p.dims, weightRange: p.weight }, method, dest)
-    if (!cmp) return { label: `needs a different method`, stored: false }
-    if (cmp.incremental === 0) return { label: 'rides free in your parcel', stored: false }
+    if (!cmp) return { label: t['chip.nomethod'], stored: false, warn: true }
+    if (cmp.incremental === 0) return { label: t['chip.free'], stored: false }
     return cmp.savings >= 0
-      ? { label: `+${fmtYen(cmp.incremental)} in your parcel`, stored: false }
-      : { label: 'cheaper shipped separately', stored: false }
-  }, [product, warehouse, method, dest, isStored, inCart])
+      ? { label: t['chip.add'](fmtYen(cmp.incremental)), stored: false }
+      : { label: t['chip.separate'], stored: false, warn: true }
+  }, [product, warehouse, method, dest, isStored, inCart, t])
 
   return (
     <a
@@ -54,7 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
             className={`mt-1.5 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-medium ${
               chip.stored
                 ? 'bg-neutral-100 text-neutral-600'
-                : chip.label.includes('different') || chip.label.includes('separately')
+                : chip.warn
                   ? 'bg-amber-50 text-amber-800'
                   : 'bg-teal-50 text-teal-800'
             }`}

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useZen } from '../state'
-import { ALL_PRODUCTS, DESTINATIONS } from '../engine/data'
+import { ALL_PRODUCTS } from '../engine/data'
 import type { Product } from '../engine/types'
 import { quote } from '../engine/pricing'
 import { addedShipping } from '../engine/recommend'
@@ -12,7 +12,7 @@ type Sort = 'relevance' | 'price-asc' | 'price-desc' | 'ship-asc'
 // ZenMarket-style listing page. The point of the demo: every card carries a
 // live shipping chip, so browsing *is* the recommendation surface.
 export function BrowsePage() {
-  const { warehouse, warehouseParcel, method, dest, query, setQuery, isStored, inCart } = useZen()
+  const { warehouse, warehouseParcel, method, dest, query, setQuery, isStored, inCart, t } = useZen()
   const [sort, setSort] = useState<Sort>('relevance')
   const parcelPrice = warehouseParcel ? quote(warehouseParcel, method, dest).price : null
 
@@ -53,29 +53,28 @@ export function BrowsePage() {
   return (
     <section className="mx-auto mt-4 max-w-6xl px-4">
       <nav className="mb-3 text-xs text-neutral-500">
-        <a href="#/" className="hover:underline">Home</a> ›{' '}
+        <a href="#/" className="hover:underline">{t['browse.home']}</a> ›{' '}
         <a href="#/shop" className="hover:underline">Amazon Japan</a> ›{' '}
-        <span className="text-neutral-700">Hobby &amp; collectibles</span>
+        <span className="text-neutral-700">{t['browse.crumbCat']}</span>
       </nav>
 
       <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
         <div>
           <h1 className="text-lg font-bold">
-            {searching ? `Search results for “${query.trim()}”` : 'Hobby & collectibles — Japan exclusives'}
+            {searching ? t['browse.searchResults'](query.trim()) : t['browse.category']}
           </h1>
           <p className="text-[13px] text-neutral-500">
-            {products.length} result{products.length === 1 ? '' : 's'} · shipping to{' '}
-            {DESTINATIONS.find((d) => d.code === dest)?.label} via {method}
+            {t['browse.meta'](products.length, t[`dest.${dest}`], method)}
             {warehouseParcel &&
-              ` · your stored parcel is ${fmtKg(warehouseParcel.weight)}${
-                parcelPrice ? ` (${fmtYen(parcelPrice)} ${method})` : ''
-              }`}
+              (parcelPrice
+                ? t['browse.parcelIs'](fmtKg(warehouseParcel.weight), fmtYen(parcelPrice), method)
+                : t['browse.parcelIsNoPrice'](fmtKg(warehouseParcel.weight)))}
             {searching && (
               <button
                 onClick={() => setQuery('')}
                 className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-600 hover:bg-neutral-200"
               >
-                clear search ✕
+                {t['browse.clear']}
               </button>
             )}
           </p>
@@ -84,18 +83,18 @@ export function BrowsePage() {
           value={sort}
           onChange={(e) => setSort(e.target.value as Sort)}
           className="rounded border border-neutral-300 bg-white px-2 py-1 text-xs text-neutral-600"
-          aria-label="Sort results"
+          aria-label={t['browse.sortAria']}
         >
-          <option value="relevance">Sort: Relevance</option>
-          <option value="price-asc">Price: low → high</option>
-          <option value="price-desc">Price: high → low</option>
-          <option value="ship-asc">Adds least shipping first</option>
+          <option value="relevance">{t['browse.sortRel']}</option>
+          <option value="price-asc">{t['browse.sortPriceAsc']}</option>
+          <option value="price-desc">{t['browse.sortPriceDesc']}</option>
+          <option value="ship-asc">{t['browse.sortShip']}</option>
         </select>
       </div>
 
       {products.length === 0 ? (
         <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-10 text-center text-sm text-neutral-500">
-          No products match “{query.trim()}” — try figure, watch, teapot or plush.
+          {t['browse.empty'](query.trim())}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

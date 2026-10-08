@@ -5,7 +5,7 @@ import { ALL_PRODUCTS, HERO_PRODUCT } from '../engine/data'
 import { predictItem } from '../engine/predict'
 import { compare, packParcel, quote } from '../engine/pricing'
 import { addedShipping } from '../engine/recommend'
-import { fmtKg, fmtYen } from '../ui'
+import { fmtDims, fmtKg, fmtYen } from '../ui'
 import { ProductCard } from './ProductCard'
 import { itemHref } from '../route'
 
@@ -13,7 +13,7 @@ import { itemHref } from '../route'
 // index.css. All numbers shown are live engine output for the hero product,
 // not hardcoded — change the warehouse and the animation's math changes too.
 function PipelineCard() {
-  const { warehouse, method, dest } = useZen()
+  const { warehouse, method, dest, t } = useZen()
   const pred = predictItem(HERO_PRODUCT)
   const items = warehouse.map((w) => ({ weight: w.measuredWeight, dims: w.measuredDims }))
   const standalone =
@@ -29,13 +29,13 @@ function PipelineCard() {
     <div className="relative">
       <div className="zmx-scene relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
         <div className="mb-3 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
-          <span>ZenMatch estimate</span>
+          <span>{t['ep.title']}</span>
           <span className="flex items-center gap-1 text-teal-700">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute h-full w-full animate-ping rounded-full bg-teal-500 opacity-75" />
               <span className="h-1.5 w-1.5 rounded-full bg-teal-600" />
             </span>
-            live
+            {t['home.live']}
           </span>
         </div>
 
@@ -61,10 +61,10 @@ function PipelineCard() {
             </div>
             <p className="relative mt-1 h-4 text-[10px] font-semibold text-neutral-500">
               <span className="zmx-wa absolute inset-0">
-                your parcel · {fmtKg(wBefore)}
+                {t['home.yourParcel'](fmtKg(wBefore))}
               </span>
               <span className="zmx-wb absolute inset-0 text-teal-700">
-                your parcel · {fmtKg(wAfter)}
+                {t['home.yourParcel'](fmtKg(wAfter))}
               </span>
             </p>
           </div>
@@ -72,19 +72,22 @@ function PipelineCard() {
 
         <div className="zmx-pred -mt-1 inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-semibold text-teal-800">
           <Brain size={12} weight="fill" />
-          predicted {fmtKg(pred.weight.p10)}–{fmtKg(pred.weight.p90)} ·{' '}
-          {pred.dims.l}×{pred.dims.w}×{pred.dims.h} cm · {pred.neighbors.length} similar shipments
+          {t['home.predChip'](
+            `${fmtKg(pred.weight.p10)}–${fmtKg(pred.weight.p90)}`,
+            fmtDims(pred.dims),
+            pred.neighbors.length,
+          )}
         </div>
 
         <div className="zmx-math mt-3 space-y-1 border-t border-neutral-100 pt-3 text-[13px]">
           <div className="flex justify-between text-neutral-500">
-            <span>Ship this item separately</span>
+            <span>{t['home.sep']}</span>
             <span className="zmx-strike relative">{fmtYen(standalone)}</span>
           </div>
           <div className="flex items-center justify-between font-semibold text-zm-ink">
             <span>
-              Add to your parcel{' '}
-              {before !== null && <span className="font-normal text-neutral-400">({fmtYen(before)} now)</span>}
+              {t['home.addTo']}{' '}
+              {before !== null && <span className="font-normal text-neutral-400">{t['home.now'](fmtYen(before))}</span>}
             </span>
             <span className="text-teal-800">
               {cmp ? `+${fmtYen(cmp.incremental)}` : `+${fmtYen(standalone)}`}
@@ -94,12 +97,12 @@ function PipelineCard() {
 
         {cmp && cmp.savings > 0 && (
           <div className="zmx-save absolute bottom-3 right-4 rounded-full bg-zm-red px-3 py-1 text-xs font-bold text-white shadow-md">
-            save ≈ {fmtYen(cmp.savings)}
+            {t['home.save'](fmtYen(cmp.savings))}
           </div>
         )}
       </div>
       <p className="mt-2 text-center text-[11px] text-neutral-400">
-        animated walkthrough — every number computed live from the engine
+        {t['home.animNote']}
       </p>
     </div>
   )
@@ -108,26 +111,26 @@ function PipelineCard() {
 const STEPS = [
   {
     icon: <Brain size={20} weight="duotone" />,
-    title: 'Predict the item',
-    body: 'A weighted k-NN over past shipments estimates weight (p10/p50/p90) and packed size from the title, category and seller — no manual entry.',
+    title: 'step1.t',
+    body: 'step1.b',
     foot: 'src/engine/predict.ts',
   },
   {
     icon: <Cube size={20} weight="duotone" />,
-    title: 'Pack the parcel',
-    body: 'Predicted items are merged with your warehouse contents into the smallest carton that fits weight and size — measured values win over predictions.',
+    title: 'step2.t',
+    body: 'step2.b',
     foot: 'src/engine/pricing.ts',
   },
   {
     icon: <Tag size={20} weight="duotone" />,
-    title: 'Price the shipment',
-    body: 'Carrier rate bands price the parcel alone vs. combined. The delta is the incremental cost; the gap vs. shipping twice is your saving.',
+    title: 'step3.t',
+    body: 'step3.b',
     foot: 'C(A+B) − C(A)',
   },
-]
+] as const
 
 export function HomePage() {
-  const { warehouse, method, dest, isStored, inCart } = useZen()
+  const { warehouse, method, dest, isStored, inCart, t } = useZen()
 
   // The rail shows the cheapest additions to your parcel — computed, not curated.
   const featured = useMemo(() => {
@@ -147,36 +150,34 @@ export function HomePage() {
         <div>
           <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-teal-800">
             <Sparkle size={12} weight="fill" />
-            ZenMatch · predictive shipping
+            {t['home.eyebrow']}
           </p>
           <h1 className="max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-zm-ink sm:text-[44px]">
-            Know what it costs to ship before you buy it.
+            {t['home.h1']}
           </h1>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-neutral-600">
-            ZenMarket shoppers guess at international shipping until the parcel is packed. ZenMatch
-            predicts each item&apos;s packed weight and size from shipment history — then prices
-            it against the parcel already sitting in your warehouse.
+            {t['home.sub']}
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <a
               href="#/shop"
               className="inline-flex items-center gap-2 rounded-md bg-zm-red px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-zm-red-dark"
             >
-              Browse Amazon Japan
+              {t['home.ctaShop']}
               <ArrowRight size={16} weight="bold" />
             </a>
             <button
               onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })}
               className="rounded-md border border-neutral-300 bg-white px-5 py-3 text-sm font-semibold text-zm-ink hover:bg-neutral-50"
             >
-              How it works
+              {t['home.ctaHow']}
             </button>
           </div>
           <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-[13px]">
             {[
-              ['40', 'synthetic shipments train the model'],
-              ['p10–p90', 'honest ranges, not fake precision'],
-              ['measured', 'warehouse items use real weights'],
+              [t['home.stat1v'], t['home.stat1']],
+              [t['home.stat2v'], t['home.stat2']],
+              [t['home.stat3v'], t['home.stat3']],
             ].map(([v, l]) => (
               <div key={l}>
                 <dt className="text-lg font-bold text-zm-ink">{v}</dt>
@@ -191,11 +192,10 @@ export function HomePage() {
       {/* Interest — the pipeline, in three cards */}
       <section id="how" className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-center text-2xl font-bold tracking-tight text-zm-ink">
-          Listing in, shipping cost out
+          {t['home.howTitle']}
         </h2>
         <p className="mx-auto mt-2 max-w-lg text-center text-sm text-neutral-500">
-          Three deterministic stages — the same pipeline a LightGBM + ASP.NET backend would run in
-          production.
+          {t['home.howSub']}
         </p>
         <div className="mt-8 grid grid-flow-dense gap-4 md:grid-cols-3">
           {STEPS.map((s, i) => (
@@ -211,8 +211,8 @@ export function HomePage() {
                   {i + 1}
                 </span>
               </div>
-              <h3 className="mt-4 font-bold text-zm-ink">{s.title}</h3>
-              <p className="mt-1.5 flex-1 text-[13px] leading-relaxed text-neutral-600">{s.body}</p>
+              <h3 className="mt-4 font-bold text-zm-ink">{t[s.title]}</h3>
+              <p className="mt-1.5 flex-1 text-[13px] leading-relaxed text-neutral-600">{t[s.body]}</p>
               <code className="mt-4 rounded bg-neutral-50 px-2 py-1 text-[11px] text-neutral-500">
                 {s.foot}
               </code>
@@ -226,17 +226,17 @@ export function HomePage() {
         <div className="mb-5 flex items-end justify-between">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-zm-ink">
-              Cheapest to add to your parcel
+              {t['home.railTitle']}
             </h2>
             <p className="mt-1 text-sm text-neutral-500">
-              Ranked live by incremental shipping — buying state changes the order.
+              {t['home.railSub']}
             </p>
           </div>
           <a
             href="#/shop"
             className="hidden items-center gap-1 text-sm font-semibold text-zm-red hover:underline sm:inline-flex"
           >
-            All products <ArrowRight size={14} weight="bold" />
+            {t['home.allProducts']} <ArrowRight size={14} weight="bold" />
           </a>
         </div>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -253,17 +253,16 @@ export function HomePage() {
             savings = C(parcel) + C(item) − C(parcel + item)
           </p>
           <h2 className="mx-auto mt-3 max-w-xl text-2xl font-bold leading-snug sm:text-3xl">
-            The math is simple. Predicting C accurately is the product.
+            {t['home.ctaTitle']}
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm text-neutral-400">
-            Open any listing and watch the banner, the estimate panel, and the neighbor table
-            explain the same number three different ways.
+            {t['home.ctaSub']}
           </p>
           <a
             href={itemHref(HERO_PRODUCT.id)}
             className="mt-6 inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-bold text-zm-ink transition-transform hover:scale-[1.02]"
           >
-            Try it on the hero listing
+            {t['home.ctaHero']}
             <ArrowRight size={16} weight="bold" />
           </a>
         </div>

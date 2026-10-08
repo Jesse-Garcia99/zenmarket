@@ -35,15 +35,15 @@ function Gallery() {
 }
 
 function Tabs() {
-  const { product } = useZen()
+  const { product, t } = useZen()
   const [tab, setTab] = useState<'desc' | 'shipping'>('desc')
   return (
     <div className="mt-8">
       <div className="flex border-b border-neutral-200">
         {(
           [
-            ['desc', 'Item description'],
-            ['shipping', 'Shipping & payment'],
+            ['desc', t['ps.tabDesc']],
+            ['shipping', t['ps.tabShip']],
           ] as const
         ).map(([key, label]) => (
           <button
@@ -60,16 +60,13 @@ function Tabs() {
       <div className="py-4 text-[13px] leading-relaxed text-neutral-600">
         {tab === 'desc' ? (
           <p>
-            {product.blurb} Listing auto-translated from Japanese.
+            {product.blurb} {t['ps.autoTrans']}
           </p>
         ) : (
           <ul className="list-disc space-y-1 pl-5">
-            <li>Domestic shipping to the ZenMarket warehouse: free.</li>
-            <li>
-              International shipping is quoted after the item arrives and is weighed — unless
-              ZenMatch predicts it first, as shown above.
-            </li>
-            <li>Free 60-day storage; consolidate any number of items into one parcel.</li>
+            <li>{t['ps.shipBullet1']}</li>
+            <li>{t['ps.shipBullet2']}</li>
+            <li>{t['ps.shipBullet3']}</li>
           </ul>
         )}
       </div>
@@ -78,7 +75,7 @@ function Tabs() {
 }
 
 export function ProductSection() {
-  const { product, addToCart, isStored, inCart, setDrawerOpen, isWatched, toggleWatch } = useZen()
+  const { product, addToCart, isStored, inCart, setDrawerOpen, isWatched, toggleWatch, t } = useZen()
   const stored = isStored(product.id)
   const carted = inCart(product.id)
   const watched = isWatched(product.id)
@@ -86,11 +83,11 @@ export function ProductSection() {
   return (
     <section className="mx-auto mt-4 max-w-6xl px-4">
       <nav className="mb-3 flex items-center gap-1 text-xs text-neutral-500">
-        <a href="#/" className="hover:underline">Home</a>
+        <a href="#/" className="hover:underline">{t['browse.home']}</a>
         <CaretRight size={10} />
         <a href="#/shop" className="hover:underline">Amazon Japan</a>
         <CaretRight size={10} />
-        <span>Hobby &amp; collectibles</span>
+        <span>{t['browse.crumbCat']}</span>
         <CaretRight size={10} />
         <span className="truncate text-neutral-700">{product.titleEn}</span>
       </nav>
@@ -107,33 +104,33 @@ export function ProductSection() {
                 <Star key={i} size={13} weight={i < 4 ? 'fill' : 'regular'} />
               ))}
             </span>
-            <span>Seller: {product.seller} · 4.8 (1,026 reviews)</span>
+            <span>{t['ps.seller']} {product.seller} · 4.8 {t['ps.reviews']}</span>
             {product.battery && (
               <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 font-medium text-amber-800">
                 <BatteryWarning size={12} weight="fill" />
-                contains lithium battery
+                {t['ps.battery']}
               </span>
             )}
           </div>
 
           <dl className="mt-4 space-y-1.5 border-t border-neutral-100 pt-4 text-[13px]">
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Item code</dt>
+              <dt className="text-neutral-500">{t['ps.itemCode']}</dt>
               <dd className="font-mono text-xs">{product.asin}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Availability</dt>
-              <dd className="font-medium text-teal-700">In stock</dd>
+              <dt className="text-neutral-500">{t['ps.avail']}</dt>
+              <dd className="font-medium text-teal-700">{t['ps.inStock']}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Domestic shipping</dt>
-              <dd>Free</dd>
+              <dt className="text-neutral-500">{t['ps.domestic']}</dt>
+              <dd>{t['ps.free']}</dd>
             </div>
           </dl>
 
           <div className="mt-4 flex items-end justify-between">
             <div>
-              <span className="text-xs text-neutral-500">Price</span>
+              <span className="text-xs text-neutral-500">{t['ps.price']}</span>
               <p className="price-num text-3xl font-bold text-zm-red">
                 {fmtYen(product.price)}
                 <span className="ml-2 text-sm font-normal text-neutral-400">
@@ -150,7 +147,7 @@ export function ProductSection() {
                 className="flex flex-1 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 py-3 text-sm font-bold text-white"
               >
                 <CheckCircle size={18} weight="bold" />
-                In your warehouse
+                {t['ps.stored']}
               </button>
             ) : carted ? (
               <button
@@ -158,7 +155,7 @@ export function ProductSection() {
                 className="flex flex-1 items-center justify-center gap-2 rounded-md bg-zm-ink px-4 py-3 text-sm font-bold text-white hover:bg-zm-ink/90"
               >
                 <ShoppingCart size={18} weight="bold" />
-                In cart — view
+                {t['ps.inCart']}
               </button>
             ) : (
               <button
@@ -166,7 +163,7 @@ export function ProductSection() {
                 className="flex flex-1 items-center justify-center gap-2 rounded-md bg-zm-red px-4 py-3 text-sm font-bold text-white transition-transform hover:bg-zm-red-dark active:scale-[0.98]"
               >
                 <ShoppingCart size={18} weight="bold" />
-                Add to cart
+                {t['ps.addCart']}
               </button>
             )}
             <button
@@ -178,12 +175,12 @@ export function ProductSection() {
               }`}
             >
               <Heart size={18} weight={watched ? 'fill' : 'regular'} />
-              {watched ? 'Watchlisted' : 'Watchlist'}
+              {watched ? t['ps.watched'] : t['ps.watch']}
             </button>
           </div>
           {stored && (
             <p className="mt-1.5 text-[11px] text-neutral-400">
-              Arrived and weighed — its measured weight now drives the parcel estimate.
+              {t['ps.storedNote']}
             </p>
           )}
 
