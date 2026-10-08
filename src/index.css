@@ -17,3 +17,234 @@ html {
 .price-num {
   font-variant-numeric: tabular-nums;
 }
+
+/* ZenMatch hero pipeline — one shared 9s loop; each element owns a % window.
+   Sequence: listing appears → weight scanned → prediction chip → item flies
+   into the parcel → parcel reweighs → math resolves → savings badge pops. */
+.zmx-scene {
+  animation: zmx-scene 9s linear infinite;
+}
+@keyframes zmx-scene {
+  0%,
+  93% {
+    opacity: 1;
+  }
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.zmx-item {
+  opacity: 0;
+  animation: zmx-item 9s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes zmx-item {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  7%,
+  52% {
+    opacity: 1;
+    transform: none;
+  }
+  62% {
+    opacity: 1;
+    transform: translateX(155px) translateY(46px) scale(0.38);
+  }
+  67%,
+  100% {
+    opacity: 0;
+    transform: translateX(155px) translateY(46px) scale(0.3);
+  }
+}
+
+.zmx-scan {
+  opacity: 0;
+  animation: zmx-scan 9s ease-in-out infinite;
+}
+@keyframes zmx-scan {
+  0%,
+  10% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  13% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(150px);
+  }
+  34%,
+  100% {
+    opacity: 0;
+    transform: translateX(150px);
+  }
+}
+
+.zmx-pred {
+  opacity: 0;
+  animation: zmx-pred 9s ease-out infinite;
+}
+@keyframes zmx-pred {
+  0%,
+  32% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  38%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.zmx-parcel {
+  opacity: 0;
+  animation: zmx-parcel 9s ease-out infinite;
+}
+@keyframes zmx-parcel {
+  0%,
+  38% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  45%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.zmx-pop {
+  animation: zmx-pop 9s ease-out infinite;
+}
+@keyframes zmx-pop {
+  0%,
+  63% {
+    transform: scale(1);
+  }
+  67% {
+    transform: scale(1.07);
+  }
+  72%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+.zmx-wa {
+  opacity: 1;
+  animation: zmx-wa 9s linear infinite;
+}
+@keyframes zmx-wa {
+  0%,
+  62% {
+    opacity: 1;
+  }
+  66%,
+  100% {
+    opacity: 0;
+  }
+}
+.zmx-wb {
+  opacity: 0;
+  animation: zmx-wb 9s linear infinite;
+}
+@keyframes zmx-wb {
+  0%,
+  62% {
+    opacity: 0;
+  }
+  66%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.zmx-math {
+  opacity: 0;
+  animation: zmx-math 9s ease-out infinite;
+}
+@keyframes zmx-math {
+  0%,
+  66% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  72%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.zmx-strike::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 55%;
+  height: 2px;
+  width: 0;
+  background: currentColor;
+  animation: zmx-strike 9s ease-out infinite;
+}
+@keyframes zmx-strike {
+  0%,
+  76% {
+    width: 0;
+  }
+  84%,
+  100% {
+    width: 100%;
+  }
+}
+
+.zmx-save {
+  opacity: 0;
+  animation: zmx-save 9s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+}
+@keyframes zmx-save {
+  0%,
+  80% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  87%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zmx-scene,
+  .zmx-item,
+  .zmx-scan,
+  .zmx-pred,
+  .zmx-parcel,
+  .zmx-pop,
+  .zmx-wa,
+  .zmx-wb,
+  .zmx-math,
+  .zmx-strike::after,
+  .zmx-save {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .zmx-scan,
+  .zmx-wb {
+    opacity: 0;
+  }
+  .zmx-wa {
+    opacity: 0;
+  }
+  .zmx-wb {
+    opacity: 1;
+  }
+  .zmx-strike::after {
+    width: 100%;
+  }
+}

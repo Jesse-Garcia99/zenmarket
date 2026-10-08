@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import { useZen } from '../state'
 import { ALL_PRODUCTS, DESTINATIONS } from '../engine/data'
 import type { Product } from '../engine/types'
-import { compare, packParcel, quote } from '../engine/pricing'
-import { predictItem } from '../engine/predict'
+import { quote } from '../engine/pricing'
+import { addedShipping } from '../engine/recommend'
 import { fmtKg, fmtYen } from '../ui'
 import { ProductCard } from './ProductCard'
 
@@ -20,23 +20,13 @@ export function BrowsePage() {
   const shipCost = useMemo(() => {
     const items = warehouse.map((w) => ({ weight: w.measuredWeight, dims: w.measuredDims }))
     const map = new Map<string, number>()
-    for (const p of ALL_PRODUCTS) {
-      if (isStored(p.id) || inCart(p.id)) {
-        map.set(p.id, Infinity)
-        continue
-      }
-      const pred = predictItem(p)
-      if (items.length === 0) {
-        map.set(
-          p.id,
-          quote(packParcel([{ weight: pred.weight.p50, dims: pred.dims }]), method, dest).price ??
-            Infinity,
-        )
-      } else {
-        const cmp = compare(items, { dims: pred.dims, weightRange: pred.weight }, method, dest)
-        map.set(p.id, cmp ? cmp.incremental : Infinity)
-      }
-    }
+    for (const p of ALL_PRODUCTS)
+      map.set(
+        p.id,
+        isStored(p.id) || inCart(p.id)
+          ? Infinity
+          : (addedShipping(p, items, method, dest) ?? Infinity),
+      )
     return map
   }, [warehouse, method, dest, isStored, inCart])
 
@@ -63,7 +53,9 @@ export function BrowsePage() {
   return (
     <section className="mx-auto mt-4 max-w-6xl px-4">
       <nav className="mb-3 text-xs text-neutral-500">
-        Home › Amazon Japan › <span className="text-neutral-700">Hobby &amp; collectibles</span>
+        <a href="#/" className="hover:underline">Home</a> ›{' '}
+        <a href="#/shop" className="hover:underline">Amazon Japan</a> ›{' '}
+        <span className="text-neutral-700">Hobby &amp; collectibles</span>
       </nav>
 
       <div className="mb-4 flex flex-wrap items-end justify-between gap-2">

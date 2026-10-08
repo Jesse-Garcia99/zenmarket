@@ -51,7 +51,7 @@ export function Header() {
           className="flex flex-1 items-center overflow-hidden rounded-md border border-neutral-300"
           onSubmit={(e) => {
             e.preventDefault()
-            location.hash = '#/'
+            location.hash = '#/shop'
           }}
         >
           <input
@@ -113,7 +113,7 @@ export function StoreTabs() {
           s === 'Amazon Japan' ? (
             <a
               key={s}
-              href="#/"
+              href="#/shop"
               className="whitespace-nowrap rounded bg-zm-ink px-3 py-1.5 text-[13px] font-semibold text-white"
             >
               {s}

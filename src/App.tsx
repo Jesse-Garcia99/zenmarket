@@ -8,10 +8,13 @@ import { WatchlistPage } from './components/WatchlistPage'
 import { AccountPage } from './components/AccountPage'
 import { MessagesPage } from './components/MessagesPage'
 import { WarehouseDrawer } from './components/WarehouseDrawer'
+import { HomePage } from './components/HomePage'
 
 function Page() {
   const { route } = useZen()
   switch (route.page) {
+    case 'home':
+      return <HomePage />
     case 'item':
       return (
         <>

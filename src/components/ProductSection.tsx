@@ -88,7 +88,7 @@ export function ProductSection() {
       <nav className="mb-3 flex items-center gap-1 text-xs text-neutral-500">
         <a href="#/" className="hover:underline">Home</a>
         <CaretRight size={10} />
-        <a href="#/" className="hover:underline">Amazon Japan</a>
+        <a href="#/shop" className="hover:underline">Amazon Japan</a>
         <CaretRight size={10} />
         <span>Hobby &amp; collectibles</span>
         <CaretRight size={10} />

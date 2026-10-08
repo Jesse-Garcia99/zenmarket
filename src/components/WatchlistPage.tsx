@@ -30,7 +30,7 @@ export function WatchlistPage() {
             updating against your parcel.
           </p>
           <a
-            href="#/"
+            href="#/shop"
             className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-zm-red px-4 py-2 text-sm font-semibold text-white hover:bg-zm-red-dark"
           >
             <ShoppingCart size={16} weight="bold" />
