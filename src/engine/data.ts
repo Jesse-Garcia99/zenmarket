@@ -180,39 +180,13 @@ export interface WarehouseItem {
   measuredDims: Dims // cm, as arrived
 }
 
+// One catalog product is already "ordered" — it arrived at the warehouse and
+// was weighed, so it carries measured values instead of a prediction.
 export const WAREHOUSE_SEED: WarehouseItem[] = [
   {
-    product: {
-      id: 'wh-figure',
-      asin: 'B0CJ4TMVKR',
-      title: 'S.H.Figuarts ウルトラマンゼット オリジナル 約150mm',
-      titleEn: 'S.H.Figuarts Ultraman Z Original',
-      category: 'figures',
-      price: 7700,
-      seller: 'ほびくるオンライン',
-      icon: 'figure',
-      battery: false,
-      blurb: '',
-      images: ['metalbuild.jpg'],
-    },
-    measuredWeight: 0.48,
-    measuredDims: { l: 19, w: 15, h: 7 },
-  },
-  {
-    product: {
-      id: 'wh-book',
-      asin: 'B0DFHK92QW',
-      title: '画集「平成エヴァンゲリオン大画集」 大型本',
-      titleEn: 'Evangelion Heisei art book (large format)',
-      category: 'books',
-      price: 4400,
-      seller: 'Amazon.co.jp',
-      icon: 'book',
-      battery: false,
-      blurb: '',
-    },
-    measuredWeight: 0.92,
-    measuredDims: { l: 30, w: 23, h: 2 },
+    product: RELATED_PRODUCTS.find((p) => p.id === 'nendo')!,
+    measuredWeight: 0.36,
+    measuredDims: { l: 18, w: 13, h: 9 },
   },
 ]
 

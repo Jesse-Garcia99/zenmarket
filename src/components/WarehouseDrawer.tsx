@@ -1,6 +1,7 @@
 import { X } from '@phosphor-icons/react'
 import { useZen } from '../state'
 import { quote } from '../engine/pricing'
+import { itemHref } from '../route'
 import { fmtDims, fmtKg, fmtYen, ProductThumb } from '../ui'
 
 // Simulated ZenMarket warehouse: items that already arrived and were weighed.
@@ -33,13 +34,20 @@ export function WarehouseDrawer() {
             <ul className="space-y-3">
               {warehouse.map((w) => (
                 <li key={w.product.id} className="flex gap-3 rounded-lg border border-neutral-200 p-3">
-                  <ProductThumb
-                    icon={w.product.icon}
-                    image={w.product.images?.[0]}
-                    className="h-14 w-14 shrink-0 rounded"
-                  />
+                  <a href={itemHref(w.product.id)} className="shrink-0">
+                    <ProductThumb
+                      icon={w.product.icon}
+                      image={w.product.images?.[0]}
+                      className="h-14 w-14 rounded"
+                    />
+                  </a>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] font-medium">{w.product.titleEn}</p>
+                    <a
+                      href={itemHref(w.product.id)}
+                      className="block truncate text-[13px] font-medium hover:text-zm-red"
+                    >
+                      {w.product.titleEn}
+                    </a>
                     <p className="price-num mt-0.5 text-xs text-neutral-500">
                       measured {fmtKg(w.measuredWeight)} · {fmtDims(w.measuredDims)}
                     </p>
