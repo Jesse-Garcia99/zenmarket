@@ -10,10 +10,11 @@ import { fmtUsd, fmtYen, ProductThumb } from '../ui'
 // Per-card shipping chip: the same incremental/standalone math as the banner,
 // resolved for one product. Stored items show a "stored" state instead.
 export function ProductCard({ product }: { product: Product }) {
-  const { warehouse, method, dest, isStored } = useZen()
+  const { warehouse, method, dest, isStored, inCart } = useZen()
 
   const chip = useMemo(() => {
     if (isStored(product.id)) return { label: 'in your warehouse', stored: true }
+    if (inCart(product.id)) return { label: 'in your cart — not yet ordered', stored: true }
     const p = predictItem(product)
     const items = warehouse.map((w) => ({ weight: w.measuredWeight, dims: w.measuredDims }))
     if (items.length === 0) {
@@ -28,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
     return cmp.savings >= 0
       ? { label: `+${fmtYen(cmp.incremental)} in your parcel`, stored: false }
       : { label: 'cheaper shipped separately', stored: false }
-  }, [product, warehouse, method, dest, isStored])
+  }, [product, warehouse, method, dest, isStored, inCart])
 
   return (
     <a

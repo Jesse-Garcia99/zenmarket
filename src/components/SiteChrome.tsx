@@ -1,4 +1,4 @@
-import { ChatCircle, Heart, MagnifyingGlass, ShoppingCart, UserCircle } from '@phosphor-icons/react'
+import { ChatCircle, Heart, MagnifyingGlass, Package, ShoppingCart, UserCircle } from '@phosphor-icons/react'
 import { useZen } from '../state'
 
 const STORES = ['All shops', 'Yahoo! Auctions', 'Rakuten', 'Amazon Japan', 'Mercari', 'Surugaya', 'Other stores']
@@ -22,7 +22,7 @@ export function DemoStrip() {
 }
 
 export function Header() {
-  const { warehouse, setDrawerOpen } = useZen()
+  const { warehouse, cart, setDrawerOpen } = useZen()
   return (
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
@@ -48,10 +48,18 @@ export function Header() {
           <ChatCircle size={22} />
           <Heart size={22} />
           <button onClick={() => setDrawerOpen(true)} className="relative" aria-label="Warehouse">
-            <ShoppingCart size={22} />
+            <Package size={22} />
             {warehouse.length > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full bg-zm-red text-[10px] font-bold text-white">
+              <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full bg-teal-700 text-[10px] font-bold text-white">
                 {warehouse.length}
+              </span>
+            )}
+          </button>
+          <button onClick={() => setDrawerOpen(true)} className="relative" aria-label="Shopping cart">
+            <ShoppingCart size={22} />
+            {cart.length > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full bg-zm-red text-[10px] font-bold text-white">
+                {cart.length}
               </span>
             )}
           </button>

@@ -14,9 +14,13 @@ import type { Comparison, Method, ParcelEstimate, Prediction, Product, Quote } f
 interface ZenState {
   route: Route
   product: Product // current product on item pages, hero on browse
-  warehouse: WarehouseItem[]
+  cart: Product[] // added but not yet ordered — predictions only
+  addToCart: (p: Product) => void
+  removeCartItem: (id: string) => void
+  checkoutCart: () => void // order -> items "arrive" in the warehouse weighed
+  inCart: (id: string) => boolean
+  warehouse: WarehouseItem[] // ordered, arrived, measured
   removeItem: (id: string) => void
-  buyItem: (p: Product) => void
   isStored: (id: string) => boolean
   resetWarehouse: () => void
   dest: DestinationCode
@@ -36,6 +40,7 @@ const Ctx = createContext<ZenState | null>(null)
 
 export function ZenProvider({ children }: { children: ReactNode }) {
   const route = useRoute()
+  const [cart, setCart] = useState<Product[]>([])
   const [warehouse, setWarehouse] = useState<WarehouseItem[]>(WAREHOUSE_SEED)
   const [dest, setDest] = useState<DestinationCode>('US')
   const [method, setMethod] = useState<Method>('EMS')
@@ -67,28 +72,38 @@ export function ZenProvider({ children }: { children: ReactNode }) {
     return {
       route,
       product,
-      warehouse,
-      removeItem: (id) => setWarehouse((w) => w.filter((i) => i.product.id !== id)),
-      // Simulates the arrival-and-weigh step: the bought item joins the
-      // warehouse carrying the predictor's p50 as its "measured" weight.
-      buyItem: (p) => {
-        const est = predictItem(p)
-        setWarehouse((w) =>
-          w.some((i) => i.product.id === p.id)
-            ? w
-            : [
-                ...w,
-                {
-                  product: p,
-                  measuredWeight: Math.round(est.weight.p50 * 100) / 100,
-                  measuredDims: est.dims,
-                },
-              ],
+      cart,
+      addToCart: (p) => {
+        setCart((c) =>
+          c.some((i) => i.id === p.id) || warehouse.some((i) => i.product.id === p.id)
+            ? c
+            : [...c, p],
         )
         setDrawerOpen(true)
       },
+      removeCartItem: (id) => setCart((c) => c.filter((i) => i.id !== id)),
+      // Ordering simulates domestic delivery + arrival weighing: each item
+      // joins the warehouse carrying the predictor's p50 as its measured weight.
+      checkoutCart: () => {
+        const arrivals = cart.map((p) => {
+          const est = predictItem(p)
+          return {
+            product: p,
+            measuredWeight: Math.round(est.weight.p50 * 100) / 100,
+            measuredDims: est.dims,
+          }
+        })
+        setWarehouse((w) => [...w, ...arrivals.filter((a) => !w.some((i) => i.product.id === a.product.id))])
+        setCart([])
+      },
+      inCart: (id) => cart.some((i) => i.id === id),
+      warehouse,
+      removeItem: (id) => setWarehouse((w) => w.filter((i) => i.product.id !== id)),
       isStored: (id) => warehouse.some((w) => w.product.id === id),
-      resetWarehouse: () => setWarehouse(WAREHOUSE_SEED),
+      resetWarehouse: () => {
+        setWarehouse(WAREHOUSE_SEED)
+        setCart([])
+      },
       dest,
       setDest,
       method,
@@ -100,7 +115,7 @@ export function ZenProvider({ children }: { children: ReactNode }) {
       warehouseParcel,
       comparison,
     }
-  }, [route, product, warehouse, dest, method, drawerOpen, prediction])
+  }, [route, product, cart, warehouse, dest, method, drawerOpen, prediction])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

@@ -78,8 +78,9 @@ function Tabs() {
 }
 
 export function ProductSection() {
-  const { product, buyItem, isStored } = useZen()
+  const { product, addToCart, isStored, inCart, setDrawerOpen } = useZen()
   const stored = isStored(product.id)
+  const carted = inCart(product.id)
 
   return (
     <section className="mx-auto mt-4 max-w-6xl px-4">
@@ -150,9 +151,17 @@ export function ProductSection() {
                 <CheckCircle size={18} weight="bold" />
                 In your warehouse
               </button>
+            ) : carted ? (
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className="flex flex-1 items-center justify-center gap-2 rounded-md bg-zm-ink px-4 py-3 text-sm font-bold text-white hover:bg-zm-ink/90"
+              >
+                <ShoppingCart size={18} weight="bold" />
+                In cart — view
+              </button>
             ) : (
               <button
-                onClick={() => buyItem(product)}
+                onClick={() => addToCart(product)}
                 className="flex flex-1 items-center justify-center gap-2 rounded-md bg-zm-red px-4 py-3 text-sm font-bold text-white transition-transform hover:bg-zm-red-dark active:scale-[0.98]"
               >
                 <ShoppingCart size={18} weight="bold" />
