@@ -20,7 +20,7 @@ export function ZenMatchBar() {
   let tone = 'bg-teal-50 border-teal-200 text-teal-950'
   let message: ReactNode
 
-  if (route.page === 'browse') {
+  if (route.page !== 'item') {
     const price = warehouseParcel ? quote(warehouseParcel, 'EMS', dest).price : null
     message = warehouseParcel ? (
       <>

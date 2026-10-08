@@ -78,9 +78,10 @@ function Tabs() {
 }
 
 export function ProductSection() {
-  const { product, addToCart, isStored, inCart, setDrawerOpen } = useZen()
+  const { product, addToCart, isStored, inCart, setDrawerOpen, isWatched, toggleWatch } = useZen()
   const stored = isStored(product.id)
   const carted = inCart(product.id)
+  const watched = isWatched(product.id)
 
   return (
     <section className="mx-auto mt-4 max-w-6xl px-4">
@@ -168,9 +169,16 @@ export function ProductSection() {
                 Add to cart
               </button>
             )}
-            <button className="flex items-center gap-2 rounded-md border border-neutral-300 px-4 py-3 text-sm font-medium text-neutral-600 hover:bg-neutral-50">
-              <Heart size={18} />
-              Watchlist
+            <button
+              onClick={() => toggleWatch(product.id)}
+              className={`flex items-center gap-2 rounded-md border px-4 py-3 text-sm font-medium hover:bg-neutral-50 ${
+                watched
+                  ? 'border-zm-red text-zm-red'
+                  : 'border-neutral-300 text-neutral-600'
+              }`}
+            >
+              <Heart size={18} weight={watched ? 'fill' : 'regular'} />
+              {watched ? 'Watchlisted' : 'Watchlist'}
             </button>
           </div>
           {stored && (

@@ -12,9 +12,22 @@ export function DemoStrip() {
           figures are simulated
         </span>
         <span className="hidden gap-4 sm:flex">
-          <span>Help</span>
-          <span>demo@zenmatch.jp</span>
-          <span>English · JPY ¥</span>
+          <a href="#/messages" className="hover:underline">
+            Help
+          </a>
+          <a href="#/account" className="hover:underline">
+            demo@zenmatch.jp
+          </a>
+          <button
+            onClick={() =>
+              window.alert(
+                'This demo is English + JPY only. The real ZenMarket supports 19 languages.',
+              )
+            }
+            className="font-semibold hover:underline"
+          >
+            English · JPY ¥
+          </button>
         </span>
       </div>
     </div>
@@ -22,7 +35,7 @@ export function DemoStrip() {
 }
 
 export function Header() {
-  const { warehouse, cart, setDrawerOpen } = useZen()
+  const { warehouse, cart, setDrawerOpen, watchlist, query, setQuery } = useZen()
   return (
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
@@ -34,19 +47,39 @@ export function Header() {
           />
           <span className="text-xl font-bold tracking-tight">ZenMarket</span>
         </a>
-        <div className="flex flex-1 items-center overflow-hidden rounded-md border border-neutral-300">
+        <form
+          className="flex flex-1 items-center overflow-hidden rounded-md border border-neutral-300"
+          onSubmit={(e) => {
+            e.preventDefault()
+            location.hash = '#/'
+          }}
+        >
           <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             className="w-full px-3 py-2 text-sm outline-none"
             placeholder="Search on Amazon Japan — paste a link or type a product name"
           />
-          <button className="flex items-center gap-1.5 bg-zm-red px-4 py-2 text-sm font-semibold text-white hover:bg-zm-red-dark">
+          <button
+            type="submit"
+            className="flex items-center gap-1.5 bg-zm-red px-4 py-2 text-sm font-semibold text-white hover:bg-zm-red-dark"
+          >
             <MagnifyingGlass size={16} weight="bold" />
             Search
           </button>
-        </div>
+        </form>
         <nav className="hidden items-center gap-5 text-neutral-600 md:flex">
-          <ChatCircle size={22} />
-          <Heart size={22} />
+          <a href="#/messages" aria-label="Support messages" title="Support" className="hover:text-zm-ink">
+            <ChatCircle size={22} />
+          </a>
+          <a href="#/watchlist" aria-label="Watchlist" title="Watchlist" className="relative hover:text-zm-ink">
+            <Heart size={22} />
+            {watchlist.length > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full bg-zm-red text-[10px] font-bold text-white">
+                {watchlist.length}
+              </span>
+            )}
+          </a>
           <button onClick={() => setDrawerOpen(true)} className="relative" aria-label="Warehouse">
             <Package size={22} />
             {warehouse.length > 0 && (
@@ -63,7 +96,9 @@ export function Header() {
               </span>
             )}
           </button>
-          <UserCircle size={22} />
+          <a href="#/account" aria-label="My account" title="My account" className="hover:text-zm-ink">
+            <UserCircle size={22} />
+          </a>
         </nav>
       </div>
     </header>

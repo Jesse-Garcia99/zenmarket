@@ -29,6 +29,11 @@ interface ZenState {
   setMethod: (m: Method) => void
   drawerOpen: boolean
   setDrawerOpen: (v: boolean) => void
+  watchlist: string[] // product ids
+  toggleWatch: (id: string) => void
+  isWatched: (id: string) => boolean
+  query: string // header search, applied on the browse grid
+  setQuery: (q: string) => void
 
   prediction: Prediction
   standaloneQuote: Quote // current product shipped alone, at p50
@@ -45,6 +50,8 @@ export function ZenProvider({ children }: { children: ReactNode }) {
   const [dest, setDest] = useState<DestinationCode>('US')
   const [method, setMethod] = useState<Method>('EMS')
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [watchlist, setWatchlist] = useState<string[]>([])
+  const [query, setQuery] = useState('')
 
   const product =
     route.page === 'item'
@@ -110,12 +117,18 @@ export function ZenProvider({ children }: { children: ReactNode }) {
       setMethod,
       drawerOpen,
       setDrawerOpen,
+      watchlist,
+      toggleWatch: (id) =>
+        setWatchlist((w) => (w.includes(id) ? w.filter((i) => i !== id) : [...w, id])),
+      isWatched: (id) => watchlist.includes(id),
+      query,
+      setQuery,
       prediction,
       standaloneQuote,
       warehouseParcel,
       comparison,
     }
-  }, [route, product, cart, warehouse, dest, method, drawerOpen, prediction])
+  }, [route, product, cart, warehouse, dest, method, drawerOpen, prediction, watchlist, query])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

@@ -1,12 +1,22 @@
 import { useEffect, useState } from 'react'
 
-// Tiny hash router: `#/` -> browse grid, `#/item/<id>` -> product page.
+// Tiny hash router: `#/` -> browse grid, `#/item/<id>` -> product page,
+// `#/watchlist`, `#/account`, `#/messages` -> account-area pages.
 // Hash-based so GitHub Pages needs no rewrite rules and every page is linkable.
-export type Route = { page: 'browse' } | { page: 'item'; id: string }
+export type Route =
+  | { page: 'browse' }
+  | { page: 'item'; id: string }
+  | { page: 'watchlist' }
+  | { page: 'account' }
+  | { page: 'messages' }
 
 const parse = (): Route => {
   const m = location.hash.match(/^#\/item\/(.+)$/)
-  return m ? { page: 'item', id: decodeURIComponent(m[1]) } : { page: 'browse' }
+  if (m) return { page: 'item', id: decodeURIComponent(m[1]) }
+  if (location.hash === '#/watchlist') return { page: 'watchlist' }
+  if (location.hash === '#/account') return { page: 'account' }
+  if (location.hash === '#/messages') return { page: 'messages' }
+  return { page: 'browse' }
 }
 
 export function useRoute(): Route {
