@@ -76,12 +76,17 @@ export function StoreTabs() {
               {s}
             </a>
           ) : (
-            <span
+            <button
               key={s}
+              onClick={() =>
+                window.alert(
+                  `${s} is not part of this demo.\n\nThis prototype supports Amazon Japan only — in production, ZenMatch would work across all ZenMarket shops.`,
+                )
+              }
               className="whitespace-nowrap rounded px-3 py-1.5 text-[13px] text-neutral-600 hover:bg-neutral-100"
             >
               {s}
-            </span>
+            </button>
           ),
         )}
       </div>
