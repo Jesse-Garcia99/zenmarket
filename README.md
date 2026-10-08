@@ -11,10 +11,15 @@ customer for a parcel weight:
 
 **Live demo:** https://jesse-garcia99.github.io/zenmatch/ (simulated data)
 
+**Model training notebook:** https://colab.research.google.com/drive/1K9vTPsouMmDl92HV76xDcVfS5aQ7iXEf —
+the LightGBM-style training/experiment side of the prediction layer; this repo
+contains the inference-facing demo (a transparent k-NN stand-in).
+
 ## What you're looking at
 
-A single product page — a deliberate facsimile of ZenMarket's
-`product.aspx?shop=amazon` layout — with the ZenMatch layer integrated:
+A browseable catalog + product pages — a deliberate facsimile of ZenMarket's
+listing and `product.aspx?shop=amazon` layouts — with the ZenMatch layer
+integrated:
 
 - **Sticky ZenMatch banner** with three states: standalone estimate when the
   warehouse is empty, incremental cost + savings when items are in storage,
