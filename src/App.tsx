@@ -1,9 +1,22 @@
-import { ZenProvider } from './state'
+import { ZenProvider, useZen } from './state'
 import { DemoStrip, Footer, Header, StoreTabs } from './components/SiteChrome'
 import { ZenMatchBar } from './components/ZenMatchBar'
 import { ProductSection } from './components/ProductSection'
 import { RelatedItems } from './components/RelatedItems'
+import { BrowsePage } from './components/BrowsePage'
 import { WarehouseDrawer } from './components/WarehouseDrawer'
+
+function Page() {
+  const { route } = useZen()
+  return route.page === 'item' ? (
+    <>
+      <ProductSection />
+      <RelatedItems />
+    </>
+  ) : (
+    <BrowsePage />
+  )
+}
 
 export default function App() {
   return (
@@ -13,8 +26,7 @@ export default function App() {
       <StoreTabs />
       <ZenMatchBar />
       <main className="pb-8">
-        <ProductSection />
-        <RelatedItems />
+        <Page />
       </main>
       <Footer />
       <WarehouseDrawer />

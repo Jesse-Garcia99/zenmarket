@@ -94,6 +94,66 @@ export const RELATED_PRODUCTS: Product[] = [
     battery: false,
     blurb: 'Handmade cast-iron teapot from Morioka. Dense and heavy.',
   },
+  {
+    id: 'hoodie',
+    asin: 'B0GJ8KTQPN',
+    title: 'STUDIO GHIBLI トトロ パーカー 日本限定カラー Mサイズ',
+    titleEn: 'Studio Ghibli Totoro hoodie, Japan-only colorway',
+    category: 'apparel',
+    price: 6800,
+    seller: 'ジブリがいっぱい',
+    icon: 'hoodie',
+    battery: false,
+    blurb: 'Japan-exclusive Ghibli parka. Soft, folds flat, ships light.',
+  },
+  {
+    id: 'keyboard',
+    asin: 'B0BNQK4YXR',
+    title: 'HHKB Professional JP Type-S 日本語配列 墨',
+    titleEn: 'HHKB Professional JP Type-S keyboard, charcoal',
+    category: 'electronics',
+    price: 36000,
+    seller: 'PFUダイレクト',
+    icon: 'keyboard',
+    battery: false,
+    blurb: 'The Japan-layout Topre keyboard. Boxed, dense for its size.',
+  },
+  {
+    id: 'bookset',
+    asin: 'B0CXZR8MNP',
+    title: 'ONE PIECE コミック 1-10巻 セット 尾田栄一郎',
+    titleEn: 'One Piece manga box set, volumes 1–10',
+    category: 'books',
+    price: 4500,
+    seller: 'Amazon.co.jp',
+    icon: 'book',
+    battery: false,
+    blurb: 'Ten-volume Japanese manga set. Heavy for its size.',
+  },
+  {
+    id: 'nendo',
+    asin: 'B0FTRX2LQK',
+    title: 'ねんどろいど 初音ミク 2.0 ノンスケール ABS&PVC 塗装済み',
+    titleEn: 'Nendoroid Hatsune Miku 2.0 posable figure',
+    category: 'figures',
+    price: 6500,
+    seller: 'グッスマ公式',
+    icon: 'figure',
+    battery: false,
+    blurb: 'Classic chibi Nendoroid in a compact box.',
+  },
+  {
+    id: 'amiibo',
+    asin: 'B0DVWC8JTN',
+    title: 'amiibo ゼルダの伝説 ティアーズオブキングダム セット',
+    titleEn: 'Zelda Tears of the Kingdom amiibo set',
+    category: 'figures',
+    price: 3960,
+    seller: 'Nintendo公式',
+    icon: 'figure',
+    battery: false,
+    blurb: 'Blister-packed amiibo figures — light, small parcel.',
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -195,6 +255,14 @@ export const HISTORY: ShipmentRecord[] = [
   // books
   r('ZX-1215', '画集 大型本 A4', 'books', 0.98, { l: 31, w: 24, h: 3 }, 1.35, { l: 35, w: 26, h: 15 }),
   r('ZX-1260', '漫画 全巻セット 10冊', 'books', 1.9, { l: 20, w: 15, h: 18 }, 2.45, { l: 30, w: 22, h: 12 }),
+  // apparel — folded garments ship flat and light
+  r('ZX-3105', 'パーカー パーカ スウェット Mサイズ', 'apparel', 0.58, { l: 30, w: 25, h: 5 }, 0.92, { l: 35, w: 26, h: 15 }),
+  r('ZX-3162', 'Tシャツ 2枚セット 限定カラー', 'apparel', 0.36, { l: 28, w: 23, h: 4 }, 0.68, { l: 30, w: 22, h: 12 }),
+  r('ZX-3211', 'ジブリ パーカー フーディ 日本限定', 'apparel', 0.62, { l: 31, w: 26, h: 6 }, 0.97, { l: 35, w: 26, h: 15 }),
+  // more figures for denser neighbor coverage
+  r('ZX-4601', 'ねんどろいど 初音ミク フィギュア 箱入り', 'figures', 0.36, { l: 18, w: 13, h: 9 }, 0.7, { l: 23, w: 17, h: 10 }),
+  r('ZX-4655', 'amiibo フィギュア ブリスターパック 2個', 'figures', 0.22, { l: 16, w: 12, h: 8 }, 0.55, { l: 23, w: 17, h: 10 }),
+  r('ZX-9302', 'キーボード HHKB 箱付き 日本語配列', 'electronics', 1.55, { l: 33, w: 15, h: 6 }, 1.98, { l: 40, w: 30, h: 20 }),
 ]
 
 export const ALL_PRODUCTS = [HERO_PRODUCT, ...RELATED_PRODUCTS]

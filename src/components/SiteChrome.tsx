@@ -26,7 +26,7 @@ export function Header() {
   return (
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
-        <a href="#" className="flex items-center gap-2.5">
+        <a href="#/" className="flex items-center gap-2.5">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-zm-red text-xl font-black text-white">
             Z
           </span>
@@ -64,18 +64,24 @@ export function StoreTabs() {
   return (
     <div className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2">
-        {STORES.map((s) => (
-          <span
-            key={s}
-            className={`whitespace-nowrap rounded px-3 py-1.5 text-[13px] ${
-              s === 'Amazon Japan'
-                ? 'bg-zm-ink font-semibold text-white'
-                : 'text-neutral-600 hover:bg-neutral-100'
-            }`}
-          >
-            {s}
-          </span>
-        ))}
+        {STORES.map((s) =>
+          s === 'Amazon Japan' ? (
+            <a
+              key={s}
+              href="#/"
+              className="whitespace-nowrap rounded bg-zm-ink px-3 py-1.5 text-[13px] font-semibold text-white"
+            >
+              {s}
+            </a>
+          ) : (
+            <span
+              key={s}
+              className="whitespace-nowrap rounded px-3 py-1.5 text-[13px] text-neutral-600 hover:bg-neutral-100"
+            >
+              {s}
+            </span>
+          ),
+        )}
       </div>
     </div>
   )

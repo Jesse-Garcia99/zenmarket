@@ -10,9 +10,11 @@ const METHODS: Method[] = ['EMS', 'AIR', 'SEA']
 // properties up front, carrier pricing applied to them, and the separate-vs-
 // consolidated comparison when the customer has items in storage.
 export function EstimatePanel() {
-  const { heroPrediction, standaloneQuote, warehouseParcel, comparison, method, setMethod } = useZen()
+  const { prediction, standaloneQuote, warehouseParcel, comparison, method, setMethod, product, isStored } =
+    useZen()
   const [open, setOpen] = useState(false)
-  const p = heroPrediction
+  const p = prediction
+  const stored = isStored(product.id)
 
   return (
     <section className="rounded-lg border border-teal-700/25 bg-white">
@@ -66,7 +68,13 @@ export function EstimatePanel() {
                   : fmtYen(standaloneQuote.price)}
             </dd>
           </div>
-          {warehouseParcel && comparison && (
+          {stored && (
+            <p className="text-[12px] font-medium text-teal-700">
+              This item is in your warehouse — its measured weight feeds the parcel estimate
+              directly.
+            </p>
+          )}
+          {!stored && warehouseParcel && comparison && (
             <>
               <div className="flex justify-between">
                 <dt className="text-neutral-600">Added to your stored parcel</dt>

@@ -1,12 +1,23 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { HERO_PRODUCT, WAREHOUSE_SEED, type DestinationCode, type WarehouseItem } from './engine/data'
+import {
+  ALL_PRODUCTS,
+  HERO_PRODUCT,
+  WAREHOUSE_SEED,
+  type DestinationCode,
+  type WarehouseItem,
+} from './engine/data'
 import { predictItem } from './engine/predict'
 import { compare, packParcel, quote } from './engine/pricing'
-import type { Comparison, Method, ParcelEstimate, Prediction, Quote } from './engine/types'
+import { useRoute, type Route } from './route'
+import type { Comparison, Method, ParcelEstimate, Prediction, Product, Quote } from './engine/types'
 
 interface ZenState {
+  route: Route
+  product: Product // current product on item pages, hero on browse
   warehouse: WarehouseItem[]
   removeItem: (id: string) => void
+  buyItem: (p: Product) => void
+  isStored: (id: string) => boolean
   resetWarehouse: () => void
   dest: DestinationCode
   setDest: (d: DestinationCode) => void
@@ -15,39 +26,68 @@ interface ZenState {
   drawerOpen: boolean
   setDrawerOpen: (v: boolean) => void
 
-  heroPrediction: Prediction
-  standaloneQuote: Quote // cost of the hero item shipped alone, at p50
-  warehouseParcel: ParcelEstimate | null // current stored items packed
-  comparison: Comparison | null // null when warehouse empty or method ineligible
+  prediction: Prediction
+  standaloneQuote: Quote // current product shipped alone, at p50
+  warehouseParcel: ParcelEstimate | null
+  comparison: Comparison | null // null when warehouse empty, ineligible, or item already stored
 }
 
 const Ctx = createContext<ZenState | null>(null)
 
 export function ZenProvider({ children }: { children: ReactNode }) {
+  const route = useRoute()
   const [warehouse, setWarehouse] = useState<WarehouseItem[]>(WAREHOUSE_SEED)
   const [dest, setDest] = useState<DestinationCode>('US')
   const [method, setMethod] = useState<Method>('EMS')
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const heroPrediction = useMemo(() => predictItem(HERO_PRODUCT), [])
+  const product =
+    route.page === 'item'
+      ? (ALL_PRODUCTS.find((p) => p.id === route.id) ?? HERO_PRODUCT)
+      : HERO_PRODUCT
+
+  const prediction = useMemo(() => predictItem(product), [product])
 
   const value = useMemo<ZenState>(() => {
     const parcelItems = warehouse.map((w) => ({ weight: w.measuredWeight, dims: w.measuredDims }))
     const warehouseParcel = parcelItems.length ? packParcel(parcelItems) : null
 
     const standaloneQuote = quote(
-      packParcel([{ weight: heroPrediction.weight.p50, dims: heroPrediction.dims }]),
+      packParcel([{ weight: prediction.weight.p50, dims: prediction.dims }]),
       method,
       dest,
     )
 
-    const comparison = warehouseParcel
-      ? compare(parcelItems, { dims: heroPrediction.dims, weightRange: heroPrediction.weight }, method, dest)
-      : null
+    const alreadyStored = warehouse.some((w) => w.product.id === product.id)
+    const comparison =
+      warehouseParcel && !alreadyStored
+        ? compare(parcelItems, { dims: prediction.dims, weightRange: prediction.weight }, method, dest)
+        : null
 
     return {
+      route,
+      product,
       warehouse,
       removeItem: (id) => setWarehouse((w) => w.filter((i) => i.product.id !== id)),
+      // Simulates the arrival-and-weigh step: the bought item joins the
+      // warehouse carrying the predictor's p50 as its "measured" weight.
+      buyItem: (p) => {
+        const est = predictItem(p)
+        setWarehouse((w) =>
+          w.some((i) => i.product.id === p.id)
+            ? w
+            : [
+                ...w,
+                {
+                  product: p,
+                  measuredWeight: Math.round(est.weight.p50 * 100) / 100,
+                  measuredDims: est.dims,
+                },
+              ],
+        )
+        setDrawerOpen(true)
+      },
+      isStored: (id) => warehouse.some((w) => w.product.id === id),
       resetWarehouse: () => setWarehouse(WAREHOUSE_SEED),
       dest,
       setDest,
@@ -55,12 +95,12 @@ export function ZenProvider({ children }: { children: ReactNode }) {
       setMethod,
       drawerOpen,
       setDrawerOpen,
-      heroPrediction,
+      prediction,
       standaloneQuote,
       warehouseParcel,
       comparison,
     }
-  }, [warehouse, dest, method, drawerOpen, heroPrediction])
+  }, [route, product, warehouse, dest, method, drawerOpen, prediction])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

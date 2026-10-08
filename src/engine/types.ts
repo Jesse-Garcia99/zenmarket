@@ -11,6 +11,7 @@ export type Category =
   | 'cards'
   | 'kitchen'
   | 'books'
+  | 'apparel'
 
 export interface Dims {
   l: number // cm
