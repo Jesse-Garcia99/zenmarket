@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-zm-red: #e5271d;
+  --color-zm-red-dark: #c41e15;
+  --color-zm-ink: #1a1d21;
+  --color-zm-teal: #0e7a6d;
+  --font-sans: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
+
+html {
+  font-family: var(--font-sans);
+  color: var(--color-zm-ink);
+  background: #f4f5f6;
+}
+
+.price-num {
+  font-variant-numeric: tabular-nums;
+}
