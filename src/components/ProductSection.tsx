@@ -1,4 +1,4 @@
-import { BatteryWarning, CaretRight, CheckCircle, Heart, ShoppingCart, Star } from '@phosphor-icons/react'
+import { BatteryWarning, CaretRight, Heart, ShoppingCart, Star } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useZen } from '../state'
 import { fmtUsd, fmtYen, ProductThumb } from '../ui'
@@ -75,7 +75,7 @@ function Tabs() {
 }
 
 export function ProductSection() {
-  const { product, addToCart, isStored, inCart, setDrawerOpen, isWatched, toggleWatch, t } = useZen()
+  const { product, addToCart, isStored, inCart, openDrawer, isWatched, toggleWatch, t } = useZen()
   const stored = isStored(product.id)
   const carted = inCart(product.id)
   const watched = isWatched(product.id)
@@ -141,17 +141,9 @@ export function ProductSection() {
           </div>
 
           <div className="mt-3 flex gap-2">
-            {stored ? (
+            {carted ? (
               <button
-                disabled
-                className="flex flex-1 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 py-3 text-sm font-bold text-white"
-              >
-                <CheckCircle size={18} weight="bold" />
-                {t['ps.stored']}
-              </button>
-            ) : carted ? (
-              <button
-                onClick={() => setDrawerOpen(true)}
+                onClick={() => openDrawer('cart')}
                 className="flex flex-1 items-center justify-center gap-2 rounded-md bg-zm-ink px-4 py-3 text-sm font-bold text-white hover:bg-zm-ink/90"
               >
                 <ShoppingCart size={18} weight="bold" />

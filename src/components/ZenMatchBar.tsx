@@ -13,7 +13,7 @@ import { fmtKg, fmtYen } from '../ui'
 //   ineligible        -> method can't carry the combined parcel
 //   empty warehouse   -> standalone estimate for the item being viewed
 export function ZenMatchBar() {
-  const { route, product, warehouse, warehouseParcel, comparison, standaloneQuote, dest, setDest, setDrawerOpen, isStored, t } =
+  const { route, product, warehouse, warehouseParcel, comparison, standaloneQuote, dest, setDest, openDrawer, isStored, t } =
     useZen()
 
   let icon = <Package size={18} weight="bold" />
@@ -100,7 +100,7 @@ export function ZenMatchBar() {
             ))}
           </select>
           <button
-            onClick={() => setDrawerOpen(true)}
+            onClick={() => openDrawer('warehouse')}
             className="rounded border border-current/25 px-2.5 py-1 text-xs font-semibold hover:bg-white/70"
           >
             {t['bar.myWarehouse']} · {t.items(warehouse.length)}

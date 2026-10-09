@@ -34,7 +34,7 @@ export function DemoStrip() {
 }
 
 export function Header() {
-  const { warehouse, cart, setDrawerOpen, watchlist, query, setQuery, t } = useZen()
+  const { warehouse, cart, openDrawer, watchlist, query, setQuery, t } = useZen()
   return (
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
@@ -79,7 +79,7 @@ export function Header() {
               </span>
             )}
           </a>
-          <button onClick={() => setDrawerOpen(true)} className="relative" aria-label={t['nav.warehouse']} title={t['nav.warehouse']}>
+          <button onClick={() => openDrawer('warehouse')} className="relative" aria-label={t['nav.warehouse']} title={t['nav.warehouse']}>
             <Package size={22} />
             {warehouse.length > 0 && (
               <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full bg-teal-700 text-[10px] font-bold text-white">
@@ -87,7 +87,7 @@ export function Header() {
               </span>
             )}
           </button>
-          <button onClick={() => setDrawerOpen(true)} className="relative" aria-label={t['nav.cart']} title={t['nav.cart']}>
+          <button onClick={() => openDrawer('cart')} className="relative" aria-label={t['nav.cart']} title={t['nav.cart']}>
             <ShoppingCart size={22} />
             {cart.length > 0 && (
               <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full bg-zm-red text-[10px] font-bold text-white">

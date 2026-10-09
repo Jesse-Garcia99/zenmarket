@@ -12,6 +12,8 @@ import { compare, packParcel, quote } from './engine/pricing'
 import { useRoute, type Route } from './route'
 import type { Comparison, Method, ParcelEstimate, Prediction, Product, Quote } from './engine/types'
 
+export type DrawerView = 'cart' | 'warehouse'
+
 interface ZenState {
   route: Route
   product: Product // current product on item pages, hero on browse
@@ -28,8 +30,9 @@ interface ZenState {
   setDest: (d: DestinationCode) => void
   method: Method
   setMethod: (m: Method) => void
-  drawerOpen: boolean
-  setDrawerOpen: (v: boolean) => void
+  drawer: DrawerView | null
+  openDrawer: (v: DrawerView) => void
+  closeDrawer: () => void
   watchlist: string[] // product ids
   toggleWatch: (id: string) => void
   isWatched: (id: string) => boolean
@@ -53,7 +56,7 @@ export function ZenProvider({ children }: { children: ReactNode }) {
   const [warehouse, setWarehouse] = useState<WarehouseItem[]>(WAREHOUSE_SEED)
   const [dest, setDest] = useState<DestinationCode>('US')
   const [method, setMethod] = useState<Method>('EMS')
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [drawer, setDrawer] = useState<DrawerView | null>(null)
   const [watchlist, setWatchlist] = useState<string[]>([])
   const [query, setQuery] = useState('')
   const [lang, setLang] = useState<Lang>('en')
@@ -89,13 +92,11 @@ export function ZenProvider({ children }: { children: ReactNode }) {
       route,
       product,
       cart,
+      // The cart only tracks the pending order — items already ordered once
+      // can be re-added like on any store; checkout dedupes warehouse entries.
       addToCart: (p) => {
-        setCart((c) =>
-          c.some((i) => i.id === p.id) || warehouse.some((i) => i.product.id === p.id)
-            ? c
-            : [...c, p],
-        )
-        setDrawerOpen(true)
+        setCart((c) => (c.some((i) => i.id === p.id) ? c : [...c, p]))
+        setDrawer('cart')
       },
       removeCartItem: (id) => setCart((c) => c.filter((i) => i.id !== id)),
       // Ordering simulates domestic delivery + arrival weighing: each item
@@ -111,6 +112,7 @@ export function ZenProvider({ children }: { children: ReactNode }) {
         })
         setWarehouse((w) => [...w, ...arrivals.filter((a) => !w.some((i) => i.product.id === a.product.id))])
         setCart([])
+        setDrawer('warehouse')
       },
       inCart: (id) => cart.some((i) => i.id === id),
       warehouse,
@@ -124,8 +126,9 @@ export function ZenProvider({ children }: { children: ReactNode }) {
       setDest,
       method,
       setMethod,
-      drawerOpen,
-      setDrawerOpen,
+      drawer,
+      openDrawer: setDrawer,
+      closeDrawer: () => setDrawer(null),
       watchlist,
       toggleWatch: (id) =>
         setWatchlist((w) => (w.includes(id) ? w.filter((i) => i !== id) : [...w, id])),
@@ -140,7 +143,7 @@ export function ZenProvider({ children }: { children: ReactNode }) {
       warehouseParcel,
       comparison,
     }
-  }, [route, product, cart, warehouse, dest, method, drawerOpen, prediction, watchlist, query, lang])
+  }, [route, product, cart, warehouse, dest, method, drawer, prediction, watchlist, query, lang])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

@@ -53,7 +53,7 @@ function MenuItem({
 }
 
 export function AccountPage() {
-  const { warehouse, cart, watchlist, setDrawerOpen, t } = useZen()
+  const { warehouse, cart, watchlist, openDrawer, t } = useZen()
   const itemTotal = warehouse.reduce((s, i) => s + i.product.price, 0)
   const demo = (label: string) => demoAlert(label, t['acc.demoAlert'])
 
@@ -90,13 +90,13 @@ export function AccountPage() {
               icon={<Package size={18} />}
               label={t['acc.mWarehouse']}
               note={t.items(warehouse.length)}
-              onClick={() => setDrawerOpen(true)}
+              onClick={() => openDrawer('warehouse')}
             />
             <MenuItem
               icon={<ShoppingCart size={18} />}
               label={t['acc.mCart']}
               note={t.items(cart.length)}
-              onClick={() => setDrawerOpen(true)}
+              onClick={() => openDrawer('cart')}
             />
             <MenuItem
               icon={<Heart size={18} />}
