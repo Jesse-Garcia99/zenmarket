@@ -9,9 +9,38 @@ import { fmtDims, fmtKg, fmtYen } from '../ui'
 import { ProductCard } from './ProductCard'
 import { itemHref } from '../route'
 
-// The hero explainer: a self-running 9s loop driven by the zmx-* keyframes in
-// index.css. All numbers shown are live engine output for the hero product,
-// not hardcoded — change the warehouse and the animation's math changes too.
+// Staggered columns of real product photos — the hero's visual. White-photo
+// backgrounds dissolve into the page, so tiles read as objects, not boxes.
+function Collage() {
+  const shots = [
+    ['goku.jpg', 'casio.jpg'],
+    ['teapot.jpg', 'hhkb.jpg'],
+    ['miku.jpg', 'pokemon.jpg'],
+  ]
+  const offsets = ['pt-10', 'pt-0', 'pt-16']
+  return (
+    <div className="grid grid-cols-3 gap-3 sm:gap-4" aria-hidden="true">
+      {shots.map((col, i) => (
+        <div key={i} className={`space-y-3 sm:space-y-4 ${offsets[i]}`}>
+          {col.map((img, j) => (
+            <img
+              key={img}
+              src={`${import.meta.env.BASE_URL}products/${img}`}
+              alt=""
+              className={`w-full rounded-xl border border-neutral-200/70 object-cover shadow-sm transition-transform duration-300 hover:rotate-0 hover:scale-[1.02] ${
+                j === 0 ? 'aspect-[4/5]' : 'aspect-square'
+              } ${i % 2 === 0 ? 'rotate-[1.5deg]' : '-rotate-[1.5deg]'}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// The live pipeline demo: a self-running 9s loop driven by the zmx-* keyframes
+// in index.css. Every number is real engine output for the hero product —
+// change the warehouse and the animation's math changes too.
 function PipelineCard() {
   const { warehouse, method, dest, t } = useZen()
   const pred = predictItem(HERO_PRODUCT)
@@ -145,37 +174,38 @@ export function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* Hero banner — full-bleed ink band: pitch left, live pipeline right */}
-      <section className="bg-zm-ink text-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 lg:grid-cols-[1.05fr_1fr] lg:py-16">
+      {/* Hero banner — white band, pitch left, product collage right */}
+      <section className="border-b border-neutral-200 bg-white bg-[radial-gradient(ellipse_at_top_right,rgba(14,122,109,0.07),transparent_55%)]">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 lg:grid-cols-[1fr_1.05fr] lg:py-20">
           <div>
-            <p className="inline-flex items-center gap-1.5 rounded-full border border-teal-400/25 bg-teal-400/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-teal-300">
+            <p className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-teal-800">
               <Sparkle size={12} weight="fill" />
               {t['home.eyebrow']}
             </p>
-            <h1 className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
+            <h1 className="mt-4 max-w-xl text-5xl font-bold leading-[1.05] tracking-tighter text-zm-ink sm:text-6xl">
               {t['home.h1']}
             </h1>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-neutral-300">
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-neutral-600">
               {t['home.sub']}
             </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-7 flex flex-wrap items-center gap-4">
               <a
                 href="#/shop"
-                className="inline-flex items-center gap-2 rounded-md bg-zm-red px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-zm-red-dark"
+                className="inline-flex items-center gap-2 rounded-md bg-zm-red px-5 py-3 text-sm font-bold text-white transition-all hover:bg-zm-red-dark active:scale-[0.98]"
               >
                 {t['home.ctaShop']}
                 <ArrowRight size={16} weight="bold" />
               </a>
               <button
                 onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })}
-                className="rounded-md border border-white/20 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                className="group inline-flex items-center gap-1.5 text-sm font-semibold text-zm-ink hover:text-zm-red"
               >
                 {t['home.ctaHow']}
+                <ArrowRight size={15} weight="bold" className="transition-transform group-hover:translate-x-0.5" />
               </button>
             </div>
           </div>
-          <PipelineCard />
+          <Collage />
         </div>
       </section>
 
@@ -195,33 +225,33 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* The pipeline — one divided panel instead of three floating cards */}
-      <section id="how" className="mx-auto max-w-6xl px-4 py-14">
-        <h2 className="text-2xl font-bold tracking-tight text-zm-ink">
-          {t['home.howTitle']}
-        </h2>
-        <p className="mt-2 max-w-lg text-sm text-neutral-500">
-          {t['home.howSub']}
-        </p>
-        <div className="mt-8 grid divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 bg-white md:grid-cols-3 md:divide-x md:divide-y-0">
-          {STEPS.map((s, i) => (
-            <article key={s.title} className="p-5">
-              <div className="flex items-center justify-between">
-                <span className="grid h-10 w-10 place-items-center rounded-lg bg-teal-50 text-teal-700">
+      {/* How it works — steps left, the live pipeline demo right */}
+      <section id="how" className="mx-auto grid max-w-6xl items-start gap-10 px-4 py-14 lg:grid-cols-2">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-zm-ink">
+            {t['home.howTitle']}
+          </h2>
+          <p className="mt-2 max-w-md text-sm text-neutral-500">
+            {t['home.howSub']}
+          </p>
+          <ol className="mt-8 space-y-6">
+            {STEPS.map((s) => (
+              <li key={s.title} className="flex gap-4">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-teal-50 text-teal-700">
                   {s.icon}
                 </span>
-                <span className="text-3xl font-bold text-neutral-100">
-                  {i + 1}
-                </span>
-              </div>
-              <h3 className="mt-4 font-bold text-zm-ink">{t[s.title]}</h3>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-neutral-600">{t[s.body]}</p>
-              <code className="mt-4 inline-block rounded bg-neutral-50 px-2 py-1 text-[11px] text-neutral-500">
-                {s.foot}
-              </code>
-            </article>
-          ))}
+                <div>
+                  <h3 className="font-bold text-zm-ink">{t[s.title]}</h3>
+                  <p className="mt-1 text-[13px] leading-relaxed text-neutral-600">{t[s.body]}</p>
+                  <code className="mt-2 inline-block rounded bg-neutral-100 px-2 py-0.5 text-[11px] text-neutral-500">
+                    {s.foot}
+                  </code>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
+        <PipelineCard />
       </section>
 
       {/* Cheapest additions to your parcel, right now */}
@@ -239,7 +269,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Closing CTA — the dark bookend matching the banner */}
+      {/* Closing CTA — the page's single dark band */}
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-2">
         <div className="rounded-xl bg-zm-ink px-6 py-12 text-center text-white sm:px-10">
           <p className="font-mono text-sm text-teal-300 sm:text-base">
