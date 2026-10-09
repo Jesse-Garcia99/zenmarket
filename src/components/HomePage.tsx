@@ -101,7 +101,7 @@ function PipelineCard() {
           </div>
         )}
       </div>
-      <p className="mt-2 text-center text-[11px] text-neutral-400">
+      <p className="mt-2 text-center text-[11px] text-neutral-500">
         {t['home.animNote']}
       </p>
     </div>
@@ -145,75 +145,78 @@ export function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* Attention — hero */}
-      <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-10 pt-10 lg:grid-cols-[1.05fr_1fr] lg:pt-14">
-        <div>
-          <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-teal-800">
-            <Sparkle size={12} weight="fill" />
-            {t['home.eyebrow']}
-          </p>
-          <h1 className="max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-zm-ink sm:text-[44px]">
-            {t['home.h1']}
-          </h1>
-          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-neutral-600">
-            {t['home.sub']}
-          </p>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <a
-              href="#/shop"
-              className="inline-flex items-center gap-2 rounded-md bg-zm-red px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-zm-red-dark"
-            >
-              {t['home.ctaShop']}
-              <ArrowRight size={16} weight="bold" />
-            </a>
-            <button
-              onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })}
-              className="rounded-md border border-neutral-300 bg-white px-5 py-3 text-sm font-semibold text-zm-ink hover:bg-neutral-50"
-            >
-              {t['home.ctaHow']}
-            </button>
+      {/* Hero banner — full-bleed ink band: pitch left, live pipeline right */}
+      <section className="bg-zm-ink text-white">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 lg:grid-cols-[1.05fr_1fr] lg:py-16">
+          <div>
+            <p className="inline-flex items-center gap-1.5 rounded-full border border-teal-400/25 bg-teal-400/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-teal-300">
+              <Sparkle size={12} weight="fill" />
+              {t['home.eyebrow']}
+            </p>
+            <h1 className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
+              {t['home.h1']}
+            </h1>
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-neutral-300">
+              {t['home.sub']}
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <a
+                href="#/shop"
+                className="inline-flex items-center gap-2 rounded-md bg-zm-red px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-zm-red-dark"
+              >
+                {t['home.ctaShop']}
+                <ArrowRight size={16} weight="bold" />
+              </a>
+              <button
+                onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })}
+                className="rounded-md border border-white/20 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                {t['home.ctaHow']}
+              </button>
+            </div>
           </div>
-          <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-[13px]">
-            {[
-              [t['home.stat1v'], t['home.stat1']],
-              [t['home.stat2v'], t['home.stat2']],
-              [t['home.stat3v'], t['home.stat3']],
-            ].map(([v, l]) => (
-              <div key={l}>
-                <dt className="text-lg font-bold text-zm-ink">{v}</dt>
-                <dd className="text-neutral-500">{l}</dd>
-              </div>
-            ))}
-          </dl>
+          <PipelineCard />
         </div>
-        <PipelineCard />
       </section>
 
-      {/* Interest — the pipeline, in three cards */}
-      <section id="how" className="mx-auto max-w-6xl px-4 py-12">
-        <h2 className="text-center text-2xl font-bold tracking-tight text-zm-ink">
+      {/* Stat strip — belongs under the hero, not inside it */}
+      <section className="border-b border-neutral-200 bg-white">
+        <div className="mx-auto grid max-w-6xl grid-cols-3 divide-x divide-neutral-100 px-4">
+          {[
+            [t['home.stat1v'], t['home.stat1']],
+            [t['home.stat2v'], t['home.stat2']],
+            [t['home.stat3v'], t['home.stat3']],
+          ].map(([v, l]) => (
+            <div key={l} className="px-3 py-4 text-center sm:px-6">
+              <p className="text-base font-bold text-zm-ink sm:text-lg">{v}</p>
+              <p className="text-xs text-neutral-500 sm:text-[13px]">{l}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* The pipeline — one divided panel instead of three floating cards */}
+      <section id="how" className="mx-auto max-w-6xl px-4 py-14">
+        <h2 className="text-2xl font-bold tracking-tight text-zm-ink">
           {t['home.howTitle']}
         </h2>
-        <p className="mx-auto mt-2 max-w-lg text-center text-sm text-neutral-500">
+        <p className="mt-2 max-w-lg text-sm text-neutral-500">
           {t['home.howSub']}
         </p>
-        <div className="mt-8 grid grid-flow-dense gap-4 md:grid-cols-3">
+        <div className="mt-8 grid divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 bg-white md:grid-cols-3 md:divide-x md:divide-y-0">
           {STEPS.map((s, i) => (
-            <article
-              key={s.title}
-              className="group flex flex-col rounded-xl border border-neutral-200 bg-white p-5 transition-shadow hover:shadow-md"
-            >
+            <article key={s.title} className="p-5">
               <div className="flex items-center justify-between">
-                <span className="grid h-10 w-10 place-items-center rounded-lg bg-teal-50 text-teal-700 transition-transform duration-300 group-hover:scale-110">
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-teal-50 text-teal-700">
                   {s.icon}
                 </span>
-                <span className="text-3xl font-bold text-neutral-100 transition-colors group-hover:text-teal-100">
+                <span className="text-3xl font-bold text-neutral-100">
                   {i + 1}
                 </span>
               </div>
               <h3 className="mt-4 font-bold text-zm-ink">{t[s.title]}</h3>
-              <p className="mt-1.5 flex-1 text-[13px] leading-relaxed text-neutral-600">{t[s.body]}</p>
-              <code className="mt-4 rounded bg-neutral-50 px-2 py-1 text-[11px] text-neutral-500">
+              <p className="mt-1.5 text-[13px] leading-relaxed text-neutral-600">{t[s.body]}</p>
+              <code className="mt-4 inline-block rounded bg-neutral-50 px-2 py-1 text-[11px] text-neutral-500">
                 {s.foot}
               </code>
             </article>
@@ -221,34 +224,24 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Desire — cheapest additions to your parcel, right now */}
+      {/* Cheapest additions to your parcel, right now */}
       <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="mb-5 flex items-end justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-zm-ink">
-              {t['home.railTitle']}
-            </h2>
-            <p className="mt-1 text-sm text-neutral-500">
-              {t['home.railSub']}
-            </p>
-          </div>
-          <a
-            href="#/shop"
-            className="hidden items-center gap-1 text-sm font-semibold text-zm-red hover:underline sm:inline-flex"
-          >
-            {t['home.allProducts']} <ArrowRight size={14} weight="bold" />
-          </a>
-        </div>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <h2 className="text-2xl font-bold tracking-tight text-zm-ink">
+          {t['home.railTitle']}
+        </h2>
+        <p className="mt-1 text-sm text-neutral-500">
+          {t['home.railSub']}
+        </p>
+        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
       </section>
 
-      {/* Action — the formula, then the CTA */}
-      <section className="mx-auto max-w-6xl px-4 pb-16 pt-4">
-        <div className="rounded-xl bg-zm-ink px-6 py-10 text-center text-white sm:px-10">
+      {/* Closing CTA — the dark bookend matching the banner */}
+      <section className="mx-auto max-w-6xl px-4 pb-16 pt-2">
+        <div className="rounded-xl bg-zm-ink px-6 py-12 text-center text-white sm:px-10">
           <p className="font-mono text-sm text-teal-300 sm:text-base">
             savings = C(parcel) + C(item) − C(parcel + item)
           </p>
